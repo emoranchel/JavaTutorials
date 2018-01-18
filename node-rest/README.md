@@ -32,17 +32,17 @@ server.listen(PORT, function () {
 });
 ```
 
-This code fragment creates a service that listens on HTTP port 8089. In a later step, you will change this port with an Oracle Application Container Cloud Service variable.
+   This code fragment creates a service that listens on HTTP port 8089. In a later step, you will change this port with an Oracle Application Container Cloud Service variable.
 
-Test your server.
+3. Test your server.
 
-```bash
+```shell
 node server.js
 ```
 
-In a browser window, go to http://localhost:8089 and look for the following message: "LATER ON, YOU WILL PLACE CODE HERE."
-To stop the server, press CTRL+C.
-Add the following variable declarations after the var PORT declaration:
+4. In a browser window, go to `http://localhost:8089` and look for the following message: `"LATER ON, YOU WILL PLACE CODE HERE."`
+5. To stop the server, press CTRL+C.
+6. Add the following variable declarations after the var PORT declaration:
 
 ```javascript
 var topicList = [];
@@ -50,7 +50,7 @@ var topicDetail = {};
 var currentId = 123;
 ```
 
-Add the following functions after the variable declarations:
+7. Add the following functions after the variable declarations:
 
 ```javascript
 function addTopic(tTitle, tText) {
@@ -60,16 +60,14 @@ function addTopic(tTitle, tText) {
    topicDetail[topicId] = {title: tTitle, text: tText, comments: []};
    return topicId;
 }
-```
 
-```javascript
 function addComment(topicId, text) {
    console.log("addComment(" + topicId + "," + text + ")");
    topicDetail[topicId].comments.push(text);
 }  
 ```
 
-Create sample messages.
+8. Create sample messages.
 
 ```javascript
 var id1 = addTopic("Topic 1","Topic 1 content");
@@ -79,7 +77,7 @@ addComment(id2, "This is a comment");
 addComment(id2, "This is another comment");            
 ```
 
-Replace the http.createServer function with the following code:
+9. Replace the http.createServer function with the following code:
 
 ```javascript
 var server = http.createServer(function (request, response) {
@@ -102,7 +100,7 @@ var server = http.createServer(function (request, response) {
 });                    
 ```
 
-Add this function to handle the HTTP requests:
+10. Add this function to handle the HTTP requests:
 
 ```javascript
 function handleRequest(request, response, requestBody) {
@@ -129,8 +127,98 @@ function handleRequest(request, response, requestBody) {
 }           
 ```
 
-Your application must listen to requests on a port provided by an Oracle Application Container Cloud Service environment variable. In your server.js file, update the var PORT variable declaration.
+11. Your application must listen to requests on a port provided by an Oracle Application Container Cloud Service environment variable. In your server.js file, update the var PORT variable declaration.
 
 ```javascript
 var PORT = process.env.PORT || 80;
 ```
+
+## Prepare the Package for deployment
+
+Oracle Application Container Cloud Service requires a manifest.json file, which contains information about which Node.js command the service should run.
+
+1. Create a manifest.json file and add:
+
+```json
+{
+  "runtime":{
+    "majorVersion":"4"
+  },
+  "command": "node server.js",
+  "release": {},
+  "notes": ""
+}
+```
+
+2. Compress the server.js and manifest.json files and bundle them into a single zip file named sample.zip.
+
+## Open the Oracle Application Container Cloud Service Console
+
+In a web browser, go to https://cloud.oracle.com/home and click Sign In.
+From the Cloud Account drop-down menu, select your data center and click My Services.
+Enter your identity domain and click Go.
+Enter your cloud account credentials and click Sign In.
+If Oracle Application Container Cloud Service isn't listed in the dashboard, click Customize Dashboard.
+Under Java, find Application Container, select Show, and close the Customize Dashboard tab.
+In the Application Container tile, click Action and select Open Service Console.
+Application Container tile
+
+## Deploy the Sample Application to Oracle Application Container Cloud Service
+
+On the Applications tab, click Create Application.
+Select Node as the application platform.
+On the Create Application page, enter Sample for the name. Under Application Artifacts, click Choose File next to Archive.
+The Application creation page
+Description of the illustration deploy-node-accs-04.jpg
+In the opened file browser, navigate to the folder where you created sample.zip, select the file, and click Open.
+Directory for the Sample project
+Description of the illustration deploy-sample-accs-04.jpg
+Click Create. Processing takes a few minutes.
+
+## Test your Node.js RESTful Service using cURL
+    On the Applications tab, click Refresh repeatedly until your application is created.
+    Copy the application URL.
+    URL on the application detail page
+    Description of the illustration test-sample-accs-07.jpg
+    In a Git CMD window, access the URL as a REST endpoint:
+
+    curl -i -X GET application URL
+
+    The sample data that you entered in server.js is displayed.
+
+    HTTP/1.1 200 OK
+    Server: Oracle-Traffic-Director/11.1.1.9
+    Date: Fri, 07 Apr 2017 18:27:41 GMT
+    Access-control-allow-origin: *
+    Access-control-allow-methods: GET, POST, OPTIONS, PUT, PATCH, DELETE
+    Access-control-allow-headers: X-Requested-With,content-type
+    Access-control-allow-credentials: true
+    Content-length: 59
+    Via: 1.1 net-apaasotd
+    Proxy-agent: Oracle-Traffic-Director/11.1.1.9
+
+    [{"title":"Topic 1","id":124},{"title":"Topic 2","id":125}]            
+
+    Add a message.
+
+    curl -i -X POST -H "Content-Type: application/json" -d '{"title":"Hello", "id":126}' application URL
+
+    Repeat step 2. The sample data is updated.
+
+    HTTP/1.1 200 OK
+    Server: Oracle-Traffic-Director/11.1.1.9
+    Date: Wed, 12 Apr 2017 17:19:25 GMT
+    Access-control-allow-origin: *
+    Access-control-allow-methods: GET, POST, OPTIONS, PUT, PATCH, DELETE
+    Access-control-allow-headers: X-Requested-With,content-type
+    Access-control-allow-credentials: true
+    Content-length: 86
+    Via: 1.1 net-apaasotd
+    Proxy-agent: Oracle-Traffic-Director/11.1.1.9
+
+    [{"title":"Topic 1","id":124},{"title":"Topic 2","id":125},{"title":"Hello","id":126}]
+
+
+## Want to Learn More?
+* Node.js website [nodejs.org](https://nodejs.org/)
+* [Using Oracle Application Container Cloud Service](http://docs.oracle.com/cloud/latest/apaas_gs/CSJSE/toc.htm)
