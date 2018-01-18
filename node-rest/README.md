@@ -41,7 +41,7 @@ node server.js
 ```
 
 4. In a browser window, go to `http://localhost:8089` and look for the following message: `"LATER ON, YOU WILL PLACE CODE HERE."`
-5. To stop the server, press CTRL+C.
+5. To stop the server, press `CTRL+C`.
 6. Add the following variable declarations after the var PORT declaration:
 
 ```javascript
@@ -127,7 +127,7 @@ function handleRequest(request, response, requestBody) {
 }           
 ```
 
-11. Your application must listen to requests on a port provided by an Oracle Application Container Cloud Service environment variable. In your server.js file, update the var PORT variable declaration.
+11. Your application must listen to requests on a port provided by an Oracle Application Container Cloud Service environment variable. In your server.js file, update the `var PORT` variable declaration.
 
 ```javascript
 var PORT = process.env.PORT || 80;
@@ -135,7 +135,7 @@ var PORT = process.env.PORT || 80;
 
 ## Prepare the Package for deployment
 
-Oracle Application Container Cloud Service requires a manifest.json file, which contains information about which Node.js command the service should run.
+Oracle Application Container Cloud Service requires a `manifest.json` file, which contains information about which Node.js command the service should run.
 
 1. Create a manifest.json file and add:
 
@@ -150,7 +150,7 @@ Oracle Application Container Cloud Service requires a manifest.json file, which 
 }
 ```
 
-2. Compress the server.js and manifest.json files and bundle them into a single zip file named sample.zip.
+2. Compress the `server.js` and `manifest.json` files and bundle them into a single zip file named `sample.zip`.
 
 ## Open the Oracle Application Container Cloud Service Console
 
@@ -161,31 +161,29 @@ Oracle Application Container Cloud Service requires a manifest.json file, which 
 5. If Oracle Application Container Cloud Service isn't listed in the dashboard, click **Customize Dashboard**.
 6. Under Java, find **Application Container**, select **Show**, and close the **Customize Dashboard** tab.
 7. In the **Application Container** tile, click **Action** and select **Open Service Console**.
-
-
-
+   ![alt text](https://raw.githubusercontent.com/emoranchel/JavaTutorials/master/node-rest/img/deploy-node-accs-03.jpg "Application Container tile")
 ## Deploy the Sample Application to Oracle Application Container Cloud Service
 
-On the Applications tab, click Create Application.
-Select Node as the application platform.
-On the Create Application page, enter Sample for the name. Under Application Artifacts, click Choose File next to Archive.
-The Application creation page
-Description of the illustration deploy-node-accs-04.jpg
-In the opened file browser, navigate to the folder where you created sample.zip, select the file, and click Open.
-Directory for the Sample project
-Description of the illustration deploy-sample-accs-04.jpg
-Click Create. Processing takes a few minutes.
+1. On the **Applications** tab, click **Create Application**.
+2. Select **Node** as the application platform.
+3. On the **Create Application** page, enter `Sample` for the name. Under **Application Artifacts**, click **Choose File** next to **Archive**.
+   ![alt text](https://raw.githubusercontent.com/emoranchel/JavaTutorials/master/node-rest/img/deploy-node-accs-04.jpg "The Application creation page")
+4. In the opened file browser, navigate to the folder where you created `sample.zip`, select the file, and click **Open**.
+   ![alt text](https://raw.githubusercontent.com/emoranchel/JavaTutorials/master/node-rest/img/deploy-sample-accs-04.jpg "Directory for the Sample project")
+5. Click **Create**. Processing takes a few minutes.
 
 ## Test your Node.js RESTful Service using cURL
-    On the Applications tab, click Refresh repeatedly until your application is created.
-    Copy the application URL.
-    URL on the application detail page
-    Description of the illustration test-sample-accs-07.jpg
-    In a Git CMD window, access the URL as a REST endpoint:
 
-    curl -i -X GET application URL
+1. On the **Applications** tab, click **Refresh** repeatedly until your application is created.
+2. Copy the application URL.
+   ![alt text](https://raw.githubusercontent.com/emoranchel/JavaTutorials/master/node-rest/img/test-sample-accs-07 "URL on the application detail page")
+3. In a Git CMD window, access the URL as a REST endpoint:
 
-    The sample data that you entered in server.js is displayed.
+```shell
+curl -i -X GET application URL
+```
+
+The sample data that you entered in server.js is displayed.
 
     HTTP/1.1 200 OK
     Server: Oracle-Traffic-Director/11.1.1.9
@@ -200,11 +198,13 @@ Click Create. Processing takes a few minutes.
 
     [{"title":"Topic 1","id":124},{"title":"Topic 2","id":125}]            
 
-    Add a message.
+Add a message.
 
-    curl -i -X POST -H "Content-Type: application/json" -d '{"title":"Hello", "id":126}' application URL
+```shell
+curl -i -X POST -H "Content-Type: application/json" -d '{"title":"Hello", "id":126}' application URL
+```
 
-    Repeat step 2. The sample data is updated.
+Repeat step 2. The sample data is updated.
 
     HTTP/1.1 200 OK
     Server: Oracle-Traffic-Director/11.1.1.9
