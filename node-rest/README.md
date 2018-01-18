@@ -154,14 +154,15 @@ Oracle Application Container Cloud Service requires a manifest.json file, which 
 
 ## Open the Oracle Application Container Cloud Service Console
 
-In a web browser, go to https://cloud.oracle.com/home and click Sign In.
-From the Cloud Account drop-down menu, select your data center and click My Services.
-Enter your identity domain and click Go.
-Enter your cloud account credentials and click Sign In.
-If Oracle Application Container Cloud Service isn't listed in the dashboard, click Customize Dashboard.
-Under Java, find Application Container, select Show, and close the Customize Dashboard tab.
-In the Application Container tile, click Action and select Open Service Console.
-Application Container tile
+1. In a web browser, go to https://cloud.oracle.com/home and click **Sign In**.
+2. From the **Cloud Account** drop-down menu, select your data center and click **My Services**.
+3. Enter your identity domain and click **Go**.
+4. Enter your cloud account credentials and click **Sign In**.
+5. If Oracle Application Container Cloud Service isn't listed in the dashboard, click **Customize Dashboard**.
+6. Under Java, find **Application Container**, select **Show**, and close the **Customize Dashboard** tab.
+7. In the **Application Container** tile, click **Action** and select **Open Service Console**.
+
+
 
 ## Deploy the Sample Application to Oracle Application Container Cloud Service
 
