@@ -176,49 +176,52 @@ Oracle Application Container Cloud Service requires a `manifest.json` file, whic
 
 1. On the **Applications** tab, click **Refresh** repeatedly until your application is created.
 2. Copy the application URL.
-   ![alt text](https://raw.githubusercontent.com/emoranchel/JavaTutorials/master/node-rest/img/test-sample-accs-07 "URL on the application detail page")
+   ![alt text](https://raw.githubusercontent.com/emoranchel/JavaTutorials/master/node-rest/img/test-sample-accs-07.jpg "URL on the application detail page")
 3. In a Git CMD window, access the URL as a REST endpoint:
 
 ```shell
 curl -i -X GET application URL
 ```
 
-The sample data that you entered in server.js is displayed.
+   The sample data that you entered in `server.js` is displayed.
 
-    HTTP/1.1 200 OK
-    Server: Oracle-Traffic-Director/11.1.1.9
-    Date: Fri, 07 Apr 2017 18:27:41 GMT
-    Access-control-allow-origin: *
-    Access-control-allow-methods: GET, POST, OPTIONS, PUT, PATCH, DELETE
-    Access-control-allow-headers: X-Requested-With,content-type
-    Access-control-allow-credentials: true
-    Content-length: 59
-    Via: 1.1 net-apaasotd
-    Proxy-agent: Oracle-Traffic-Director/11.1.1.9
+```
+HTTP/1.1 200 OK
+Server: Oracle-Traffic-Director/11.1.1.9
+Date: Fri, 07 Apr 2017 18:27:41 GMT
+Access-control-allow-origin: *
+Access-control-allow-methods: GET, POST, OPTIONS, PUT, PATCH, DELETE
+Access-control-allow-headers: X-Requested-With,content-type
+Access-control-allow-credentials: true
+Content-length: 59
+Via: 1.1 net-apaasotd
+Proxy-agent: Oracle-Traffic-Director/11.1.1.9
 
-    [{"title":"Topic 1","id":124},{"title":"Topic 2","id":125}]            
+[{"title":"Topic 1","id":124},{"title":"Topic 2","id":125}]            
+```
 
-Add a message.
+4. Add a message.
 
 ```shell
 curl -i -X POST -H "Content-Type: application/json" -d '{"title":"Hello", "id":126}' application URL
 ```
 
-Repeat step 2. The sample data is updated.
+5. Repeat step 2. The sample data is updated.
 
-    HTTP/1.1 200 OK
-    Server: Oracle-Traffic-Director/11.1.1.9
-    Date: Wed, 12 Apr 2017 17:19:25 GMT
-    Access-control-allow-origin: *
-    Access-control-allow-methods: GET, POST, OPTIONS, PUT, PATCH, DELETE
-    Access-control-allow-headers: X-Requested-With,content-type
-    Access-control-allow-credentials: true
-    Content-length: 86
-    Via: 1.1 net-apaasotd
-    Proxy-agent: Oracle-Traffic-Director/11.1.1.9
+```
+HTTP/1.1 200 OK
+Server: Oracle-Traffic-Director/11.1.1.9
+Date: Wed, 12 Apr 2017 17:19:25 GMT
+Access-control-allow-origin: *
+Access-control-allow-methods: GET, POST, OPTIONS, PUT, PATCH, DELETE
+Access-control-allow-headers: X-Requested-With,content-type
+Access-control-allow-credentials: true
+Content-length: 86
+Via: 1.1 net-apaasotd
+Proxy-agent: Oracle-Traffic-Director/11.1.1.9
 
-    [{"title":"Topic 1","id":124},{"title":"Topic 2","id":125},{"title":"Hello","id":126}]
-
+[{"title":"Topic 1","id":124},{"title":"Topic 2","id":125},{"title":"Hello","id":126}]
+```
 
 ## Want to Learn More?
 * Node.js website [nodejs.org](https://nodejs.org/)
