@@ -1,0 +1,13 @@
+This illustration shows the Create Application page. It contains a form to create an application in Oracle Application Container Cloud Service. 
+
+The Application form contains the following fields and values: 
+
+Name: Sample (selected)
+
+Notification Email: user@example.com
+
+Metering Frequency: Monthly
+
+Application Artifacts: Upload (selected)
+
+The Archive, Manifest, and Deployment Configuration options each contain a Choose File button to select a file. The Choose File button next to Archive is selected.

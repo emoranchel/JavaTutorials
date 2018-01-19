@@ -162,21 +162,25 @@ Oracle Application Container Cloud Service requires a `manifest.json` file, whic
 6. Under Java, find **Application Container**, select **Show**, and close the **Customize Dashboard** tab.
 7. In the **Application Container** tile, click **Action** and select **Open Service Console**.
    ![alt text](img/deploy-node-accs-03.jpg "Application Container tile")
+   [Description of the illustration: deploy-node-accs-03.jpg](img/deploy-node-accs-03.txt)
 ## Deploy the Sample Application to Oracle Application Container Cloud Service
 
 1. On the **Applications** tab, click **Create Application**.
 2. Select **Node** as the application platform.
 3. On the **Create Application** page, enter `Sample` for the name. Under **Application Artifacts**, click **Choose File** next to **Archive**.
    ![alt text](img/deploy-node-accs-04.jpg "The Application creation page")
+   [Description of the illustration: deploy-node-accs-04.jpg](img/deploy-node-accs-04.txt)
 4. In the opened file browser, navigate to the folder where you created `sample.zip`, select the file, and click **Open**.
    ![alt text](img/deploy-sample-accs-04.jpg "Directory for the Sample project")
+   [Description of the illustration: deploy-sample-accs-04.jpg](img/deploy-sample-accs-04.txt)
 5. Click **Create**. Processing takes a few minutes.
 
 ## Test your Node.js RESTful Service using cURL
 
 1. On the **Applications** tab, click **Refresh** repeatedly until your application is created.
 2. Copy the application URL.
-   ![alt text](test-sample-accs-07.jpg "URL on the application detail page")
+   ![alt text](img/test-sample-accs-07.jpg "URL on the application detail page")
+   [Description of the illustration: test-sample-accs-07.jpg](img/test-sample-accs-07.txt)
 3. In a Git CMD window, access the URL as a REST endpoint:
 
 ```shell

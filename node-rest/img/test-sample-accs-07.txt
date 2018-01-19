@@ -1,0 +1,1 @@
+This illustration shows the Sample application details in the Applications tab, after the application is created. The URL field (selected) contains the URL of your application. 
