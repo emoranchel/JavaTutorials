@@ -161,22 +161,22 @@ Oracle Application Container Cloud Service requires a `manifest.json` file, whic
 5. If Oracle Application Container Cloud Service isn't listed in the dashboard, click **Customize Dashboard**.
 6. Under Java, find **Application Container**, select **Show**, and close the **Customize Dashboard** tab.
 7. In the **Application Container** tile, click **Action** and select **Open Service Console**.
-   ![alt text](https://raw.githubusercontent.com/emoranchel/JavaTutorials/master/node-rest/img/deploy-node-accs-03.jpg "Application Container tile")
+   ![alt text](img/deploy-node-accs-03.jpg "Application Container tile")
 ## Deploy the Sample Application to Oracle Application Container Cloud Service
 
 1. On the **Applications** tab, click **Create Application**.
 2. Select **Node** as the application platform.
 3. On the **Create Application** page, enter `Sample` for the name. Under **Application Artifacts**, click **Choose File** next to **Archive**.
-   ![alt text](https://raw.githubusercontent.com/emoranchel/JavaTutorials/master/node-rest/img/deploy-node-accs-04.jpg "The Application creation page")
+   ![alt text](img/deploy-node-accs-04.jpg "The Application creation page")
 4. In the opened file browser, navigate to the folder where you created `sample.zip`, select the file, and click **Open**.
-   ![alt text](https://raw.githubusercontent.com/emoranchel/JavaTutorials/master/node-rest/img/deploy-sample-accs-04.jpg "Directory for the Sample project")
+   ![alt text](img/deploy-sample-accs-04.jpg "Directory for the Sample project")
 5. Click **Create**. Processing takes a few minutes.
 
 ## Test your Node.js RESTful Service using cURL
 
 1. On the **Applications** tab, click **Refresh** repeatedly until your application is created.
 2. Copy the application URL.
-   ![alt text](https://raw.githubusercontent.com/emoranchel/JavaTutorials/master/node-rest/img/test-sample-accs-07.jpg "URL on the application detail page")
+   ![alt text](test-sample-accs-07.jpg "URL on the application detail page")
 3. In a Git CMD window, access the URL as a REST endpoint:
 
 ```shell
