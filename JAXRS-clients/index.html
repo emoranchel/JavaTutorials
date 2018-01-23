@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html>
+  <!-- OBE Template 2012: Version 3.0 Last updated 3/13/2012--><!-- Author: Glenn Stokol and Marcie Young-->
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+    <title>Java EE 7: Using JAX-RS Client API to consume RESTful Web Services</title>
+    <link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css">
+    <link rel="stylesheet" href="css/base.css">
+    <!-- Load jQuery, SimpleModal and Basic JS files -->
+    <script type="text/javascript" src="js/viewport.js">
+        </script>
+    <script type="text/javascript" src="js/jquery.js">
+        </script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js">
+        </script>
+    <script type="text/javascript" src="js/basic.js">
+        </script>
+    <!--[if lt IE 9]>
+    <script src="js/html5.js"></script>    <![endif]-->
+    <style type="text/css">
+		.code-highlight{background-color: #e6ecfb; border: 1px solid red; display: inline-block;}
+		.italic {font-style: italic}
+		.bold {font-weight: bold}
+		.accent {color: #ce7b00}
+		.tagcolor {color: #0000e6}
+		.green {color: #009900}
+		.highlight-caret-row {background-color: #e9eff8}
+		.highlight2 {color: #9f0d79; background-color: #e9eff8}
+		.redish {color: #9f0d79}
+		.comment {color: #969696}
+		.highblue {color: #0000e6; background-color: #e9eff8}
+		.greenItalic {color: #009900; font-style: italic}
+		.tagcolor {color: #0000e6}
+		.codeHighlight{
+		  display: inline-block;
+		  border: 1px solid #ff0000;
+		  background-color:#e9eff8;
+		}
+		.ST0 {color: #628fb5; background-color: #e9eff8}
+		.ST1 {color: #0000e6; background-color: #e9eff8; font-weight: bold}
+		.ST3 {color: #ce7b00; background-color: #e9eff8}
+		.ST2 {font-style: italic}
+		.ST4 {color: #628fb5}
+		.style_002 {color: #009900}
+		.style_003 {color: #ce7b00}
+		.style_004 {color: #0000e6}
+		.style_006 {font-weight: bold}
+		.style_007 {background-color: #e9eff8; font-weight: bold}
+		.style_011 {color: #009b00; background-color: #e9eff8}
+
+	</style>
+  </head>
+  <body>
+    <article>
+      <header>
+        <h1>Java EE 7: Using JAX-RS Client API to consume RESTful Web Services</h1>
+        <nav> <span id="toolbar" class="ui-corner-all"> <button id="topicBtn">
+              Topic List </button> <button id="tglTopicBtn"> Expand All Topics
+            </button> <button id="tglImageBtn"> Hide All Images </button> <button
+
+              id="printBtn"> Print </button> </span> </nav>
+      </header>
+      <div id="container">
+	  
+		<!-- Overview -->
+        <section>
+          <h2 id="overview"> Overview </h2>
+          <div>
+            <ol>
+              <h4> Purpose </h4>
+              <p> The purpose of this tutorial is to create a sticker story web application in which users can collaborate to create a story by dragging images into a book or canvas.
+			  When a sticker is dropped onto the canvas, it is rendered in all other web browsers that are connected to the server. 
+			  A sticker's state is also persisted on the server so information is saved if a session ends.</p>
+              <h4> Time to Complete </h4>
+              <p> Approximately 1 hour <approximate time="" needed="" to="" complete=""
+
+                  the="" tutorial,="" not="" including="" system="" requirements.=""
+
+                  most="" obe="" tutorials="" should="" take="" about="" an="" hour.="">
+                </approximate> </p>
+             
+			 <h4> Scenario </h4>
+				<p>You will start with a bare client interface and a minimal REST server. 
+				To complete the sticker story application, you'll use the JAX-RS 2.0 Client and JSON API to handle client-server communication.
+				Finally, you'll persist the data in the server to for saving a sticker's current state.</p>
+			 
+			  <h4> Software Requirements </h4>
+				<p> The following is a list of software requirements needed to accomplish this tutorial: </p>
+
+					<ul>
+						<li> Download and install the Java Platform, Enterprise Edition 7 (Java EE 7) software development kit from <a href="http://www.oracle.com/technetwork/java/javaee/downloads/index.html" target="_blank"> http://www.oracle.com/technetwork/java/javaee/downloads/index.html</a> </li>
+						<li> Download and install NetBeans integrated development environment (IDE) 7.3.1 from <a href="http://www.netbeans.org/downloads/index.html" target="_blank"> http://www.netbeans.org/downloads/index.html</a> </li>
+						<li> Download and install Oracle GlassFish Server 4.0 from <a href="http://www.oracle.com/technetwork/middleware/weblogic/downloads/index.html">http://www.oracle.com/technetwork/middleware/weblogic/downloads/index.html</a> </li>
+					</ul>
+
+              <h4> Prerequisites </h4>
+              <p> Before starting this tutorial, you should have: </p>
+              <ul>
+                <li> Knowledge of the Java programming language. </li>
+                <li> Intermediate knowledge of Java EE 7.</li>
+                <li> Basic knowledge of HTML. </li>
+              </ul>
+            </ol>
+          </div>
+        </section>
+		
+        <!-- Section 1 -->
+        <section>
+          <h2 id="t1"> Introduction to JAX-RS 2.0 Clients </h2>
+          <div>
+            <ol>
+				<p>This section gives a brief introduction to Contexts and Dependency Injection, Servlets, and Enterprise JavaBeans.</p>
+				<p>Dependency Injection refers to the process of supplying an external dependency to a software component, allowing you to remove hard-coded dependencies. 
+				These dependencies can be supplied in a type-safe way and choose which implementation of a particular interface to use.</p>
+				<p>CDI injects components (such as Java beans) that live in well-defined references or scopes. 
+				This makes the use of components from different scopes more natural and convenient, since you can use and inject beans from different scopes. 
+				CDI is also integrated with Expression Language (EL), which allows any component to be used directly within a JavaServer Faces page or a JavaServer Pages page. 
+				CDI also helps you design and build loosely coupled systems, since it decouples the server and the client by means of well-defined types and qualifiers. </p>
+            </ol>
+          </div>
+        </section>
+		
+        <!-- Section 2: Preparing the Project -->
+        <section>
+          <h2 id="t2"> Preparing the Project </h2>
+          <div>
+            <ol>
+              <p> In this section, you create a Java EE 6 web application on
+                which you’ll build the book registration application on. </p>
+                    <!-- Step 1 -->
+                    <figure>
+						<figcaption>
+							<p> Download the <span class="_obe_code_enter">sticker-story</span> and the <span class="_obe_code_enter">sticker-story-rest-server</span>  files, which contain the projects’ source files you’ll work with throughout the tutorial. </p>
+							<ul>
+								<li>To download the <span class="_obe_code_enter">sticker-story</span>  project, click <a href="sticker-story.zip">here</a>.</li>
+								<li>To download the <span class="_obe_code_enter">sticker-story-rest-server</span> project, click <a href="sticker-story-rest-server.zip">here</a>.</li>
+							</ul>
+						</figcaption>
+					</figure>
+					<!-- Step 2 -->
+                    <figure>
+						<figcaption>
+							<p> Open the <b>Netbeans IDE</b>. </p>
+						</figcaption>
+					</figure>
+					<!-- Step 3 -->
+                    <figure>
+						<figcaption>
+							<p> From the <b>File</b> menu, select <b>Open Project</b>. </p>
+						</figcaption>
+						<img src="images/t20101.png" class="ScreenShot" id="t20101"> 
+					</figure>
+					<!-- Step 4 -->
+                    <figure>
+						<figcaption>
+							<p> Browse to the location where the <span class="_obe_code_enter">sticker-story</span>  project is located. </p>
+						</figcaption>
+					</figure>
+					<!-- Step 5 -->
+                    <figure>
+						<figcaption>
+							<p> Select the <span class="_obe_code_enter">sticker-story</span>  project and click <b>Open Project</b>. </p>
+						</figcaption>
+						<img src="images/t20102.png" class="ScreenShot" id="t30102"> 
+						<figcaption>
+							<p> The <span class="_obe_code_enter">sticker-story</span>  project is added to the Projects pane in NetBeans. </p>
+						</figcaption>
+						<img src="images/t20103.png" class="ScreenShot" id="t30103">
+					</figure>
+					<!-- Step 6 -->
+                    <figure>
+						<figcaption>
+							<p> Select <b>File &gt; Open Project</b>. </p>
+						</figcaption>
+						<img src="images/t20104.png" class="ScreenShot" id="t30104">
+					</figure>
+					<!-- Step 7 -->
+                    <figure>
+						<figcaption>
+							<p> Browse to the location where the <span class="_obe_code_enter">sticker-story-rest-server</span>  project is located. </p>
+						</figcaption>
+					</figure>
+					<!-- Step 8 -->
+                    <figure>
+						<figcaption>
+							<p> Select the <span class="_obe_code_enter">sticker-story-rest-server</span>  project and click <b>Open Project</b>. </p>
+						</figcaption>
+						<img src="images/t20105.png" class="ScreenShot" id="t30105">
+						<figcaption>
+							<p> The <span class="_obe_code_enter">sticker-story-rest-server</span>  project is added to the Projects pane in NetBeans. </p>
+						</figcaption>
+						<img src="images/t20106.png" class="ScreenShot" id="t30106">
+					</figure>
+					<!-- Step 9 -->
+                    <figure>
+						<figcaption>
+							<p> Right-click the <span class="_obe_code_enter">sticker-story</span>  project and click <b>Clean and Build</b>. </p>
+						</figcaption>
+						<img src="images/t20107.png" class="ScreenShot" id="t30107">
+						<figcaption>
+							<p> <b>Note</b>: The <b>Clean and Build</b> option downloads and all dependencies from the maven repository and builds them. This may take a few minutes. </p>
+						</figcaption>
+					</figure>
+					<!-- Step 10 -->
+                    <figure>
+						<figcaption>
+							<p> Right-click the <span class="_obe_code_enter">sticker-story-rest-server</span>  project and click <b>Clean and Build</b>. </p>
+						</figcaption>
+						<img src="images/t20108.png" class="ScreenShot" id="t30108">
+						<figcaption>
+							<p> <b>Note</b>: The <b>Clean and Build</b> option downloads and all dependencies from the maven repository and builds them. This may take a few minutes. </p>
+						</figcaption>
+					</figure>
+					<!-- Step 11 -->
+                    <figure>
+						<figcaption>
+							<p> Right-click the <span class="_obe_code_enter">sticker-story</span>  project and click <b>Run</b> to build and deploy the project </p>
+						</figcaption>
+						<img src="images/t20109.png" class="ScreenShot" id="t30109">
+					</figure>
+					<!-- Step 12 -->
+                    <figure>
+						<figcaption>
+							<p> Select <b>GlassFish Server</b> from the server list and click <b>OK</b>. </p>
+						</figcaption>
+						<img src="images/t20110.png" class="ScreenShot" id="t30110">
+						<figcaption>
+							<p> The <span class="_obe_code_enter">sticker-story</span>  project is started and a web browser opens and displays the story book page. </p>
+						</figcaption>
+						<img src="images/t20111.png" class="ScreenShot" id="t30111">
+					</figure>
+					<!-- Step 13 -->
+                    <figure>
+						<figcaption>
+							<p> Right-click the <span class="_obe_code_enter">sticker-story-rest-server</span>  project and click <b>Run</b> to build and deploy the project. </p>
+						</figcaption>
+						<img src="images/t20112.png" class="ScreenShot" id="t30112">
+					</figure>
+					<!-- Step 14 -->
+                    <figure>
+						<figcaption>
+							<p> Select <b>GlassFish Server</b> from the server list and click <b>OK</b>. </p>
+						</figcaption>
+						<img src="images/t20113.png" class="ScreenShot" id="t30113">
+						<figcaption>
+							<p> The <span class="_obe_code_enter">sticker-story-rest-server</span> project is started and a web browser opens and displays a <em>Hello, World!</em> message. </p>
+						</figcaption>
+						<img src="images/t20114.png" class="ScreenShot" id="t30114">
+					</figure>
+                			
+				<p> The <span class="_obe_code_enter">sticker-story</span> and <span class="_obe_code_enter">sticker-story-rest-server</span> projects are running. You are now ready to start modifying them. </p>
+				</ol>
+			</div>
+		</section>
+		
+		<!-- Section 3: Generating a JSON List of Images -->
+        <section>
+          <h2 id="t3"> Generating a JSON List of Images </h2>
+          <div>
+            <ol>
+              <p> In this section, you learn how to generate a JSON list that contains the names of the sticker images that are available for the users to interact with. 
+			  To accomplish this, you must modify the <span class="_obe_code_enter">getImageList()</span> method of the <span class="_obe_code_enter">StickersResource</span> class.  
+			  Once the list of sticker names is generated, they can be accessed in the following URL: <a href="http://localhost:8080/sticker-story-rest-server/rest/stickers">http://localhost:8080/sticker-story-rest-server/rest/stickers</a>. </p>
+                    <!-- Step 1 -->
+                    <figure>
+						<figcaption>
+							<p> Open the <span class="_obe_code_enter">StickersResource.java</span> class, located in the <span class="_obe_code_enter">org.books.sticker.story.rest.server</span> package of the <span class="_obe_code_enter">sticker-story-rest-server</span> project. </p>
+						</figcaption>
+						<img src="images/t30101.png" class="ScreenShot" id="t30101"> 
+					</figure>
+					<!-- Step 2 -->
+                    <figure>
+						<figcaption>
+							<p> Create an <span class="_obe_code_enter">JSONArray</span> model for storing the sticker images’ names by adding the following code to the <span class="_obe_code_enter">getImageList()</span> method. </p>
+						</figcaption>
+<pre>
+@GET
+@Produces(<span class="character">"</span><span class="character">application/json</span><span class="character">"</span>)
+<span class="keyword-directive">public</span> JsonArray <span class="ST0">getImageList</span>() {
+<span class="codeHighlight">    JsonArrayBuilder arrayBld = Json.<span class="style_003">createArrayBuilder</span>();    </span>
+}
+</pre>						
+					</figure>
+					<!-- Step 3 -->
+                    <figure>
+						<figcaption>
+							<p> Iterate over the image names and add them to a <span class="_obe_code_enter">JSONArray</span> model by adding the following code: </p>
+						</figcaption>
+<pre>
+@GET
+@Produces(<span class="character">"</span><span class="character">application/json</span><span class="character">"</span>)
+<span class="keyword-directive">public</span> JsonArray <span class="ST0">getImageList</span>() {
+    JsonArrayBuilder arrayBld = Json.<span class="style_003">createArrayBuilder</span>();
+<span class="codeHighlight">    <span class="keyword-directive">for</span> (String imageName : <span class="ST1">imageNames</span>) {    
+      arrayBld.add(imageName);
+    }    </span>
+}
+</pre>						
+						<figcaption>
+							<p> The  <span class="_obe_code_enter">JSONArray</span> model now contains the sticker images’ names. </p>
+						</figcaption>
+					</figure>
+					<!-- Step 4 -->
+                    <figure>
+						<figcaption>
+							<p> Build the <span class="_obe_code_enter">JSONArray</span> model and specify it as a return value by adding the following code: </p>
+						</figcaption>
+<pre>
+@GET
+@Produces(<span class="character">"</span><span class="character">application/json</span><span class="character">"</span>)
+<span class="keyword-directive">public</span> JsonArray <span class="ST0">getImageList</span>() {
+    JsonArrayBuilder arrayBld = Json.<span class="style_003">createArrayBuilder</span>();
+    <span class="keyword-directive">for</span> (String imageName : <span class="ST1">imageNames</span>) {
+      arrayBld.add(imageName);
+    }
+<span class="codeHighlight">    <span class="keyword-directive">return</span> arrayBld.build();    </span>
+}
+</pre>						
+					</figure>
+					<!-- Step 5 -->
+                    <figure>
+						<figcaption>
+							<p> Select <b>Source &gt; Fix Imports</b> to import the required packages. </p>
+						</figcaption>
+						<img src="images/t30102.png" class="ScreenShot" id="t30102"> 
+					</figure>
+					<!-- Step 6 -->
+                    <figure>
+						<figcaption>
+							<p> Select <b>File &gt; Save</b> to save the file. </p>
+						</figcaption>
+						<img src="images/t30103.png" class="ScreenShot" id="t30103"> 
+					</figure>
+					<!-- Step 7 -->
+                    <figure>
+						<figcaption>
+							<p> Go to a web browser and open the following URL: <a href="http://localhost:8080/sticker-story-rest-server/rest/stickers">http://localhost:8080/sticker-story-rest-server/rest/stickers</a>. </p>
+						</figcaption>
+						<img src="images/t30104.png" class="ScreenShot" id="t30104"> 
+						<figcaption>
+							<p> The list of sticker names is displayed in the browser. 
+							You may also see each individual sticker image by opening the following URL: 
+							<a href="http://localhost:8080/sticker-story-rest-server/rest/stickers/star.png">http://localhost:8080/sticker-story-rest-server/rest/stickers/<em>&lt;sticker name&gt;</em></a>, 
+							where <span class="_obe_code_enter">&lt;sticker name&gt;</span> is replaced by each individual sticker name, such as <span class="_obe_code_enter">star.png</span>.</p>
+						</figcaption>
+					</figure>
+
+					
+				</ol>
+			</div>
+		</section>
+
+		<!-- Section 4: Retrieving the JSON List of Images -->
+        <section>
+          <h2 id="t4"> Retrieving the JSON List of Images </h2>
+          <div>
+            <ol>
+              <p> In this section, you retrieve the JSON list of sticker images generated in Section 3. 
+			  To accomplish this,  you modify the <span class="_obe_code_enter">getAllStickers()</span> method of the <span class="_obe_code_enter">StickerSheet</span> class.</p>
+                    <!-- Step 1 -->
+                    <figure>
+						<figcaption>
+							<p> Open the <span class="_obe_code_enter">StickerSheet.java</span> class, located in the <span class="_obe_code_enter">org.sticker.jsf</span> package of the <span class="_obe_code_enter">sticker-story</span> project. </p>
+						</figcaption>
+						<img src="images/t40101.png" class="ScreenShot" id="t40101"> 
+					</figure>
+					<!-- Step 2 -->
+                    <figure>
+						<figcaption>
+							<p> Create an <span class="_obe_code_enter">ArrayList</span>  for storing the sticker image names by adding the following code: </p>
+						</figcaption>
+<pre>
+<span class="keyword-directive">public</span> List&lt;String&gt; <span class="ST0">getAllStickers</span>() {
+<span class="codeHighlight">   List&lt;String&gt; allStickers = <span class="keyword-directive">new</span> ArrayList&lt;&gt;();  
+   <span class="keyword-directive">return</span> allStickers;   </span>
+}
+</pre>						
+					</figure>
+					<!-- Step 3 -->
+                    <figure>
+						<figcaption>
+							<p> Create a JAX-RS 2.0 <span class="_obe_code_enter">Client</span> instance by adding the following code: </p>
+						</figcaption>
+<pre>
+<span class="keyword-directive">public</span> List&lt;String&gt; <span class="ST0">getAllStickers</span>() {
+   List&lt;String&gt; allStickers = <span class="keyword-directive">new</span> ArrayList&lt;&gt;();
+<span class="codeHighlight">   Client client = ClientBuilder.<span class="style_003">newClient</span>();   </span>
+   
+   <span class="keyword-directive">return</span> allStickers;</span>
+}
+</pre>				
+						<figcaption>
+							<p> The <span class="_obe_code_enter">Client</span>  class builds and executes requests for calling a REST service. 
+							The <span class="_obe_code_enter">ClientBuilder</span> class creates a <span class="_obe_code_enter">Client</span>  object to make such requests. </p>
+						</figcaption>
+					</figure>
+					<!-- Step 4 -->
+                    <figure>
+						<figcaption>
+							<p> Specify a JAX-RS 2.0 <span class="_obe_code_enter">WebTarget</span>  object by adding the following code: </p>
+						</figcaption>
+<pre>
+<span class="keyword-directive">public</span> List&lt;String&gt; <span class="ST0">getAllStickers</span>() {
+   List&lt;String&gt; allStickers = <span class="keyword-directive">new</span> ArrayList&lt;&gt;();
+   Client client = ClientBuilder.<span class="style_003">newClient</span>();
+<span class="codeHighlight">   WebTarget target = client.target(<span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/stickers</span><span class="character">"</span>);  </span>
+   <span class="keyword-directive">return</span> allStickers;</span>
+}
+</pre>						
+						<figcaption>
+							<p> <b>Note</b>: A <span class="_obe_code_enter">WebTarget</span>  object represent a JAX-RS 2.0 resource where a <span class="_obe_code_enter">Client</span> object can make requests to. 
+							In this case, the requested resource is the JSON list of sticker names whose URI is <a href="http://localhost:8080/sticker-story-rest-server/rest/stickers/">http://localhost:8080/sticker-story-rest-server/rest/stickers/</a>. 
+							The <span class="_obe_code_enter">Client</span>  object created in the previous step can now request the JSON list of stickers. </p>
+						</figcaption>
+					</figure>
+					<!-- Step 5 -->
+                    <figure>
+						<figcaption>
+							<p> Create a <span class="_obe_code_enter">JsonArray</span>  object to store the target’s response by adding the following code: </p>
+						</figcaption>
+<pre>
+<span class="keyword-directive">public</span> List&lt;String&gt; <span class="ST0">getAllStickers</span>() {
+   List&lt;String&gt; allStickers = <span class="keyword-directive">new</span> ArrayList&lt;&gt;();
+   Client client = ClientBuilder.<span class="style_003">newClient</span>();
+   WebTarget target = client.target(<span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/stickers</span><span class="character">"</span>);
+<span class="codeHighlight">   JsonArray response = target.request(MediaType.<span class="style_005">APPLICATION_JSON</span>).get(JsonArray.<span class="keyword-directive">class</span>);   </span>
+    <span class="keyword-directive">return</span> allStickers;
+}
+</pre>						
+					</figure>
+					<!-- Step 6 -->
+                    <figure>
+						<figcaption>
+							<p> Iterate over the response <span class="_obe_code_enter">JsonArray</span>  object and store its values on the <span class="_obe_code_enter">allStickers</span> ArrayList by adding the following code: </p>
+						</figcaption>
+<pre>
+<span class="keyword-directive">public</span> List&lt;String&gt; <span class="ST0">getAllStickers</span>() {
+   List&lt;String&gt; allStickers = <span class="keyword-directive">new</span> ArrayList&lt;&gt;();
+   Client client = ClientBuilder.<span class="style_003">newClient</span>();
+   WebTarget target = client.target(<span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/stickers</span><span class="character">"</span>);
+   JsonArray response = target.request(MediaType.<span class="style_005">APPLICATION_JSON</span>).get(JsonArray.<span class="keyword-directive">class</span>);
+<span class="codeHighlight">   <span class="keyword-directive">for</span> (JsonValue sticker : response) {
+      allStickers.add(((JsonString) sticker).getString());  
+   }</span>
+   <span class="keyword-directive">return</span> allStickers;
+}
+</pre>					
+						<figcaption>
+							<p>The different strings of the sticker image names are now stored in the <span class="_obe_code_enter">allStickers</span> ArrayList.</p>
+						</figcaption>
+					</figure>
+					<!-- Step 7 -->
+                    <figure>
+						<figcaption>
+							<p> Select <b>Source &gt; Fix Imports</b> to import the required packages. </p>
+						</figcaption>
+						<img src="images/t40102.png" class="ScreenShot" id="t40102"> 
+					</figure>
+					<!-- Step 8 -->
+                    <figure>
+						<figcaption>
+							<p> Select <b>File &gt; Save</b> to save the file. </p>
+						</figcaption>
+						<img src="images/t40103.png" class="ScreenShot" id="t40103"> 
+					</figure>
+					<!-- Step 9 -->
+                    <figure>
+						<figcaption>
+							<p> Go to a web browser and open the following URL: <a href="http://localhost:8080/sticker-story">http://localhost:8080/sticker-story</a> </p>
+						</figcaption>
+						<img src="images/t40104.png" class="ScreenShot" id="t40104"> 
+						<figcaption>
+							<p> Notice how the Stickers section now displays some broken link images. 
+							The browser tried to download the sticker images, but failed. 
+							This is part of the tutorial and you will learn how to display them in the next section.  </p>
+							<p> <b>Note</b>: Some browsers, such as Mozilla Firefox, may not display a broken link image. You may try opening the Error Console to see the attempts from the browser to download such images and failed to do so.
+							</p>
+						</figcaption>
+					</figure>
+                <figcaption>
+					<p> A list of images is now obtained by the client. </p>
+				</figcaption>    
+				</ol>
+			</div>
+		</section>
+		
+        <!-- Section 5: Creating a Database Connection for Object Persistence -->
+        <section>
+          <h2 id="t5"> Displaying the Images On the Client </h2>
+          <div>
+            <ol>
+				<p> In this section you learn how to display the sticker images in the web browser. 
+				Currently, images are served in the <span class="_obe_code_enter">index.html</span> file of the <span class="_obe_code_enter">sticker-story project. 
+				The <span class="_obe_code_enter">stickerContainer div contains the code that render the images by using JSF 2.0, 
+				calling the <span class="_obe_code_enter">StickerServlet servlet, and sending the sticker name as a parameter, as shown in the following piece of code: </p>
+<pre>
+</pre>
+				<p><b>Note</b>: To learn how JSF 2.0 is used to render the images, see the <JSF 2.0 OBE> tutorial, which revolves around the same sticker story application.
+				</p>
+                
+				<p>To render the images on the browser, you will modify the <span class="_obe_code_enter">StickerServlet class using JAX-RS 2.0 clients to make asynchronous calls to the server.
+				</p>
+				<!-- Section 5.1: -->
+				<section>
+					<h3 id="t5s1" class="r_arrow"> Creating an Asynchronous Request to the Server </h3>
+					<div>
+						<ol>
+							<!-- Step 1 -->
+							<figure>
+								<figcaption>
+									<p>Open the <span class="_obe_code_enter">StickerServlet.java</span> class, located in the <span class="_obe_code_enter">org.sticker.jsf.servlets package of the <span class="_obe_code_enter">sticker-story project.</p>
+								</figcaption>
+								<img src="images/t50101.png" class="ScreenShot" id="t50101"> 
+							</figure>
+							<!-- Step 2 -->
+							<figure>
+								<figcaption>
+									<p>Create a JAX-RS 2.0 <span class="_obe_code_enter">Client</span> instance by adding the following code:</p>
+								</figcaption>
+<pre>
+@WebServlet(name = <span class="character">"</span><span class="character">StickerServlet</span><span class="character">"</span>, urlPatterns = {<span class="character">"</span><span class="character">/StickerServlet</span><span class="character">"</span>}</span>)
+<span class="keyword-directive">public</span> <span class="keyword-directive">class</span> <span class="ST0">StickerServlet</span> <span class="keyword-directive">extends</span> HttpServlet {
+
+  @Override
+  <span class="keyword-directive">protected</span> <span class="keyword-directive">void</span> <span class="ST0">doGet</span>(HttpServletRequest request, HttpServletResponse response)
+          <span class="keyword-directive">throws</span> ServletException, IOException {
+<span class="codeHighlight">    Client client = ClientBuilder.<span class="style_003">newClient</span>();   </span>   
+  }
+}
+</pre>								
+							</figure>
+							<!-- Step 3 -->
+							<figure>
+								<figcaption>
+									<p>Specify a JAX-RS 2.0 <span class="_obe_code_enter">WebTarget</span> object by adding the following code:</p>
+								</figcaption>
+<pre>
+@WebServlet(name = <span class="character">"</span><span class="character">StickerServlet</span><span class="character">"</span>, urlPatterns = {<span class="character">"</span><span class="character">/StickerServlet</span><span class="character">"</span>}</span>)
+<span class="keyword-directive">public</span> <span class="keyword-directive">class</span> <span class="ST0">StickerServlet</span> <span class="keyword-directive">extends</span> HttpServlet {
+
+  @Override
+  <span class="keyword-directive">protected</span> <span class="keyword-directive">void</span> <span class="ST0">doGet</span>(HttpServletRequest request, HttpServletResponse response)
+          <span class="keyword-directive">throws</span> ServletException, IOException {
+    Client client = ClientBuilder.<span class="style_003">newClient</span>();
+<span class="codeHighlight">    String url = <span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/stickers/</span><span class="character">"</span> + request.getParameter(<span class="character">"</span><span class="character">name</span><span class="character">"</span>);   
+    WebTarget target = client.target(url);</span>
+
+  }
+}
+</pre>								
+							</figure>
+							<!-- Step 4 -->
+							<figure>
+								<figcaption>
+									<p>Add client support for making asynchronous calls to the server by using the <span class="_obe_code_enter">AsyncContext</span> class. Add the following code:</p>
+								</figcaption>
+<pre>
+@WebServlet(name = <span class="character">"</span><span class="character">StickerServlet</span><span class="character">"</span>, urlPatterns = {<span class="character">"</span><span class="character">/StickerServlet</span><span class="character">"</span>}<span class="codeHighlight">, asyncSupported = <span class="keyword-directive">true</span></span>)
+<span class="keyword-directive">public</span> <span class="keyword-directive">class</span> <span class="ST0">StickerServlet</span> <span class="keyword-directive">extends</span> HttpServlet {
+
+  @Override
+  <span class="keyword-directive">protected</span> <span class="keyword-directive">void</span> <span class="ST0">doGet</span>(HttpServletRequest request, HttpServletResponse response)
+          <span class="keyword-directive">throws</span> ServletException, IOException {
+    Client client = ClientBuilder.<span class="style_003">newClient</span>();
+    String url = <span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/stickers/</span><span class="character">"</span> + request.getParameter(<span class="character">"</span><span class="character">name</span><span class="character">"</span>);   
+    WebTarget target = client.target(url);
+
+  }
+}
+</pre>								
+								<figcaption>
+									<p><b>Note</b>: The <span class="_obe_code_enter">javax.servlet.AsyncContex</span> class is required for this step. You will import this and the rest of the required packages in the following steps.</p>
+									<p>The JAX-RS 2.0 <span class="_obe_code_enter">Client</span> can now make asynchronous calls to the server (specified in the WebTarget object).</p>
+								</figcaption>
+							</figure>
+							<!-- Step 5 -->
+							<figure>
+								<figcaption>
+									<p>Add the following code to specify the MIME type response of the request.</p>
+								</figcaption>
+<pre>
+@WebServlet(name = <span class="character">"</span><span class="character">StickerServlet</span><span class="character">"</span>, urlPatterns = {<span class="character">"</span><span class="character">/StickerServlet</span><span class="character">"</span>}</span>)
+<span class="keyword-directive">public</span> <span class="keyword-directive">class</span> <span class="ST0">StickerServlet</span> <span class="keyword-directive">extends</span> HttpServlet {
+
+  @Override
+  <span class="keyword-directive">protected</span> <span class="keyword-directive">void</span> <span class="ST0">doGet</span>(HttpServletRequest request, HttpServletResponse response)
+          <span class="keyword-directive">throws</span> ServletException, IOException {
+    Client client = ClientBuilder.<span class="style_003">newClient</span>();
+    String url = <span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/stickers/</span><span class="character">"</span> + request.getParameter(<span class="character">"</span><span class="character">name</span><span class="character">"</span>);   
+    WebTarget target = client.target(url);
+
+<span class="codeHighlight">    response.setContentType(<span class="character">"</span><span class="character">image/png</span><span class="character">"</span>);    </span>
+ 
+  }
+}
+</pre>
+							</figure>
+							<!-- Step 6 -->
+							<figure>
+								<figcaption>
+									<p>Specify the asychronous context request to put the request in asynchronous mode by adding the following code:</p>
+								</figcaption>
+<pre>
+@WebServlet(name = <span class="character">"</span><span class="character">StickerServlet</span><span class="character">"</span>, urlPatterns = {<span class="character">"</span><span class="character">/StickerServlet</span><span class="character">"</span>}</span>)
+<span class="keyword-directive">public</span> <span class="keyword-directive">class</span> <span class="ST0">StickerServlet</span> <span class="keyword-directive">extends</span> HttpServlet {
+
+  @Override
+  <span class="keyword-directive">protected</span> <span class="keyword-directive">void</span> <span class="ST0">doGet</span>(HttpServletRequest request, HttpServletResponse response)
+          <span class="keyword-directive">throws</span> ServletException, IOException {
+    Client client = ClientBuilder.<span class="style_003">newClient</span>();
+    String url = <span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/stickers/</span><span class="character">"</span> + request.getParameter(<span class="character">"</span><span class="character">name</span><span class="character">"</span>);   
+    WebTarget target = client.target(url);
+
+    response.setContentType(<span class="character">"</span><span class="character">image/png</span><span class="character">"</span>);
+
+<span class="codeHighlight">    AsyncContext asyncContext = request.startAsync();    </span>
+
+  }
+}
+</pre>								
+							</figure>
+							<!-- Step 7 -->
+							<figure>
+								<figcaption>
+									<p>Add an asynchronous target request and specify a target callback function by adding the following code: </p>
+								</figcaption>
+<pre>
+@WebServlet(name = <span class="character">"</span><span class="character">StickerServlet</span><span class="character">"</span>, urlPatterns = {<span class="character">"</span><span class="character">/StickerServlet</span><span class="character">"</span>}</span>)
+<span class="keyword-directive">public</span> <span class="keyword-directive">class</span> <span class="ST0">StickerServlet</span> <span class="keyword-directive">extends</span> HttpServlet {
+
+  @Override
+  <span class="keyword-directive">protected</span> <span class="keyword-directive">void</span> <span class="ST0">doGet</span>(HttpServletRequest request, HttpServletResponse response)
+          <span class="keyword-directive">throws</span> ServletException, IOException {
+    Client client = ClientBuilder.<span class="style_003">newClient</span>();
+    String url = <span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/stickers/</span><span class="character">"</span> + request.getParameter(<span class="character">"</span><span class="character">name</span><span class="character">"</span>);   
+    WebTarget target = client.target(url);
+
+    response.setContentType(<span class="character">"</span><span class="character">image/png</span><span class="character">"</span>);
+
+    AsyncContext asyncContext = request.startAsync();
+
+<span class="codeHighlight">    target.request(<span class="character">"</span><span class="character">image/png</span><span class="character">"</span>).async().get(<span class="keyword-directive">new</span> StickerCallback(asyncContext));    </span>
+  }
+}
+</pre>							<figcaption>
+									<p>The <span class="_obe_code_enter">StickerCallback</span> class is now defined as the callback function of the asynchronous request.</p>
+									<p><b>Note:</b> The <span class="_obe_code_enter">StickerCallback</span> class has not been created yet. You will do this in the following steps.</p>
+								</figcaption>	
+							</figure>
+							<!-- Step 8 -->
+							<figure>
+								<figcaption>
+									<p>Select <b>Source &gt; Fix Imports</b> to import the required packages.</p>
+								</figcaption>
+								<img src="images/t50102.png" class="ScreenShot" id="t50102"> 
+							</figure>
+							<!-- Step 9 -->
+							<figure>
+								<figcaption>
+									<p>Select <b>File &gt; Save</b> to save the file.</p>
+								</figcaption>
+								<img src="images/t50103.png" class="ScreenShot" id="t50103"> 
+							</figure>
+						</ol>
+					</div>
+                 </section>   
+                
+				<!-- Section 5.2: -->
+				<section>
+					<h3 id="t5s2" class="r_arrow"> Defining the Callback Function </h3>
+					<div>
+						<ol>
+							<!-- Step 1 -->
+							<figure>
+								<figcaption>
+									<p>In the <span class="_obe_code_enter">StickerServlet.java</span> class, 
+									click the exclamation mark that highlights <span class="_obe_code_enter">StickerCallback</span> and click <b>Create class “StickerCallback” with constructor…</b>
+									to create the <span class="_obe_code_enter">StickerCallback</span> class.</p>
+								</figcaption>
+							<img src="images/t50201.png" class="ScreenShot" id="t50201"> 
+								<figcaption>
+									<p>The <span class="_obe_code_enter">StickerCallback.java</span> class is created.</p>
+								</figcaption>
+							</figure>
+							<!-- Step 2 -->
+							<figure>
+								<figcaption>
+									<p>Implement the <span class="_obe_code_enter">InvocationCallback</span> class by adding the following code:</p>
+								</figcaption>
+<pre>
+<span class="keyword-directive">public</span> <span class="keyword-directive">class</span> <span class="ST0">StickerCallback</span> <span class="keyword-directive"></span><span class="codeHighlight"><span class="keyword-directive">implements</span> InvocationCallback&lt;InputStream&gt;</span> {
+  <span class="keyword-directive">public</span> <span class="ST0">StickerCallback</span>(AsyncContext asyncContext) {
+<span class="codeHighlight">   <span class="keyword-directive">this</span>.<span class="ST1">asyncContext</span> = asyncContext;   </span>
+  }
+}
+</pre>						
+							</figure>
+							<!-- Step 3 -->
+							<figure>
+								<figcaption>
+									<p>Specify the <span class="_obe_code_enter">completed()</span> method by adding the following code:</p>
+								</figcaption>
+<pre>
+<span class="keyword-directive">public</span> <span class="keyword-directive">class</span> <span class="ST0">StickerCallback</span> <span class="keyword-directive"></span><span class="keyword-directive">implements</span> InvocationCallback&lt;InputStream&gt; {
+
+<span class="keyword-directive">private</span> <span class="keyword-directive">final</span> AsyncContext <span class="ST1">asyncContext</span>;
+
+  <span class="keyword-directive">public</span> <span class="ST0">StickerCallback</span>(AsyncContext asyncContext) {
+    <span class="keyword-directive">this</span>.<span class="ST1">asyncContext</span> = asyncContext;
+  }
+
+
+<span class="codeHighlight">  <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">completed</span>(InputStream response) {
+  } 
+  
+  <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">failed</span>(Throwable throwable) {
+  }</span>
+
+}
+</pre>							
+								<figcaption>
+									<p><b>Note</b>: The <span class="_obe_code_enter">completed()</span> method is executed if the asynchronous response is completed. Similarly, the failed method is executed is executed if the asynchronous called failed.</p>
+								</figcaption>
+							</figure>
+							<!-- Step 4 -->
+							<figure>
+								<figcaption>
+									<p>Implement the <span class="_obe_code_enter">completed()</span> method by adding the following code: </p>
+								</figcaption>
+<pre>
+<span class="keyword-directive">public</span> <span class="keyword-directive">class</span> <span class="ST0">StickerCallback</span> <span class="keyword-directive"></span><span class="keyword-directive">implements</span> InvocationCallback&lt;InputStream&gt; {
+
+<span class="keyword-directive">private</span> <span class="keyword-directive">final</span> AsyncContext <span class="ST1">asyncContext</span>;
+
+  <span class="keyword-directive">public</span> <span class="ST0">StickerCallback</span>(AsyncContext asyncContext) {
+    <span class="keyword-directive">this</span>.<span class="ST1">asyncContext</span> = asyncContext;
+  }
+
+<span class="codeHighlight">  @Override
+  <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">completed</span>(InputStream response) {
+    <span class="keyword-directive">try</span> (InputStream input = response; OutputStream output = <span class="ST1">asyncContext</span>.getResponse().getOutputStream()) {
+      <span class="keyword-directive">byte</span>[] buffer = <span class="keyword-directive">new</span> <span class="keyword-directive">byte</span>[1024];
+      <span class="keyword-directive">int</span> read;
+      <span class="keyword-directive">while</span> ((read = input.read(buffer)) &gt; 0) {
+        output.write(buffer, 0, read);
+      }
+    } <span class="keyword-directive">catch</span> (Exception e) {
+    }
+    <span class="ST1">asyncContext</span>.complete();
+  } </span>
+ 
+  <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">failed</span>(Throwable throwable) {
+  }</span>
+
+}
+</pre>						
+								<figcaption>
+									<p>The <span class="_obe_code_enter">completed</span> method copies the response stream from the asynchronous context to another stream, called <span class="_obe_code_enter">output</span>, which is used for debugging purposes.</p>
+								</figcaption>
+							</figure>	
+							<!-- Step 5 -->
+							<figure>
+								<figcaption>
+									<p>Implement the <span class="_obe_code_enter">failed()</span> method by adding the following code:</p>
+								</figcaption>
+<pre>
+<span class="keyword-directive">public</span> <span class="keyword-directive">class</span> <span class="ST0">StickerCallback</span> <span class="keyword-directive"></span><span class="keyword-directive">implements</span> InvocationCallback&lt;InputStream&gt; {
+
+<span class="keyword-directive">private</span> <span class="keyword-directive">final</span> AsyncContext <span class="ST1">asyncContext</span>;
+
+  <span class="keyword-directive">public</span> <span class="ST0">StickerCallback</span>(AsyncContext asyncContext) {
+    <span class="keyword-directive">this</span>.<span class="ST1">asyncContext</span> = asyncContext;
+  }
+
+  @Override
+  <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">completed</span>(InputStream response) {
+    <span class="keyword-directive">try</span> (InputStream input = response; OutputStream output = <span class="ST1">asyncContext</span>.getResponse().getOutputStream()) {
+      <span class="keyword-directive">byte</span>[] buffer = <span class="keyword-directive">new</span> <span class="keyword-directive">byte</span>[1024];
+      <span class="keyword-directive">int</span> read;
+      <span class="keyword-directive">while</span> ((read = input.read(buffer)) &gt; 0) {
+        output.write(buffer, 0, read);
+      }
+    } <span class="keyword-directive">catch</span> (Exception e) {
+    }
+    <span class="ST1">asyncContext</span>.complete();
+  }
+ 
+<span class="codeHighlight">  @Override
+  <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">failed</span>(Throwable throwable) {
+    <span class="ST1">asyncContext</span>.complete();
+  }</span>
+
+}
+</pre>						
+							</figure>
+							<!-- Step 6 -->
+							<figure>
+								<figcaption>
+									<p>Select <b>Source &gt; Fix Imports</b> to import the required packages.</p>
+								</figcaption>
+							</figure>
+							<img src="images/t50202.png" class="ScreenShot" id="t50202"> 
+							<!-- Step 7 -->
+							<figure>
+								<figcaption>
+									<p>Select<b> File &gt; Save</b> to save the file.</p>
+								</figcaption>
+							</figure>
+							<img src="images/t50203.png" class="ScreenShot" id="t50203"> 
+							<!-- Step 8 -->
+							<figure>
+								<figcaption>
+									<p>Go to a web browser and open the following URL: <a href="http://localhost:8080/sticker-story">http://localhost:8080/sticker-story</a>.</p>
+								</figcaption>
+								<img src="images/t50204.png" class="ScreenShot" id="t50204">
+								<figcaption>
+									<p>The sticker story application is displayed and the sticker images are now rendered in the Stickers section.</p>
+									<p><b>Tip:</b> To see how the WebSocket API is used in this example, open a new browser window and place the two browser windows side-by-side.
+									Then drag and drop a sticker of any window into its corresponding story board. The stickers are rendered in both (or all connected) browsers.</p>
+								</figcaption>
+							</figure>
+							<!-- Step 9 -->
+							<figure>
+								<figcaption>
+									<p>Drag the stickers and drop them in the canvas.</p>
+								</figcaption>
+								<img src="images/t50205.png" class="ScreenShot" id="t50205"> 
+								<figcaption>
+									<p>The sticker images stay where they are dropped.</p>
+								</figcaption>
+							</figure>
+							<!-- Step 10 -->
+							<figure>
+								<figcaption>
+									<p>Open a new web browser and go to the following URL: <a href="http://localhost:8080/sticker-story">http://localhost:8080/sticker-story</a>.</p>
+								</figcaption>
+								<img src="images/t50206.png" class="ScreenShot" id="t50206">
+								<figcaption>
+									<p>The sticker story application is displayed again, but the stickers aren't in the story board anymore! What happened? They haven't been persisted yet.
+									You will learn how to save the sticker's positions in the server in the following section.</p>
+								</figcaption>
+							</figure>
+						</ol>
+					</div>
+                </section>				
+				
+				<p> </p>
+				
+				</ol>
+			</div>
+		</section>
+		
+        <!-- Section 6: Persisting the Sticker's Data -->
+        <section>
+			<h2 id="t6"> Creating a Persistence Unit </h2>
+			<div>
+				<ol>
+					<p>In this section, you learn how to persist the sticker’s information in the server. To accomplish this, you must:
+					</p>
+					<ul>
+						<li>Create a client-side persistence request with the sticker’s data</li>
+						<li>Sending the sticker’s data to all connected users</li>
+						<li>Persist new sticker’s data</li>
+					</ul>
+					
+					<!-- Section 6.1: -->
+					<section>
+					<h3 id="t6s1" class="r_arrow"> Creating a Client-Side Persistence Request </h3>
+					
+					<div>
+						<ol>
+					
+							<p>In this section, you create a client-side persistence request. Client-side requests are made when one of the following events occur:
+							</p>
+							<ul>
+								<li>A new client (or user) connects to the server.</li>
+								<li>A sticker is dropped in the sticker board.</li>
+							</ul>
+					
+					
+							<!-- Step 1 -->
+							<figure>
+								<figcaption>
+									<p>Open the <span class="_obe_code_enter">StoryWebSocket.java</span> class, located in the <span class="_obe_code_enter">org.sticker.websocket</span> package of the <span class="_obe_code_enter">sticker-story</span> project.</p>
+								</figcaption>
+								<img src="images/t60101.png" class="ScreenShot" id="t60101">
+								<figcaption>
+									<p>The <span class="_obe_code_enter">StoryWebSocket.java</span> class contains the following methods:</p>
+									<ul>
+										<li><span class="_obe_code_enter">onOpen()</span>, which is executed when a new connection to the server is made.</li>
+										<li><span class="_obe_code_enter">onMessage()</span>, which is executed when a sticker is dropped in the sticker board. You will modify this method to persist a sticker’s type and position when it is dropped in the board.</li>
+									</ul>
+								</figcaption>
+							</figure>
+							<!-- Step 2 -->
+							<figure>
+								<figcaption>
+									<p>Create a JSON object with the sticker’s data by adding the following code to the <span class="_obe_code_enter">onMessage()</span> method:</p>
+								</figcaption>
+<pre>
+@OnMessage
+<span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">onMessage</span>(Session session, Sticker sticker) {
+<span class="codeHighlight">  JsonObject jsonSticker = Json.<span class="style_003">createObjectBuilder</span>()  
+          .add(<span class="character">"</span><span class="character">name</span><span class="character">"</span>, sticker.getImage())
+          .add(<span class="character">"</span><span class="character">x</span><span class="character">"</span>, sticker.getX())
+          .add(<span class="character">"</span><span class="character">y</span><span class="character">"</span>, sticker.getY())
+          .build();</span>
+
+Set&lt;Session&gt; openSessions = session.getOpenSessions();
+  <span class="keyword-directive">for</span> (Session openSession : openSessions) {
+    <span class="keyword-directive">try</span> {
+      openSession.getBasicRemote().sendObject(sticker);
+    } <span class="keyword-directive">catch</span> (IOException | EncodeException ex) {
+      Logger.<span class="style_003">getLogger</span>(StoryWebSocket.<span class="keyword-directive">class</span>.getName()).log(Level.<span class="style_005">SEVERE</span>, <span class="keyword-directive">null</span>, ex);
+    }
+  }
+}
+</pre>
+								<figcaption>
+									<p>A JSON representation of a sticker, which contains its name and coordinates, is created.</p>
+								</figcaption>
+							</figure>
+							<!-- Step 3 -->
+							<figure>
+								<figcaption>
+									<p>Create a <span class="_obe_code_enter">Client</span> object using the JAX-RS 2.0 <span class="_obe_code_enter">ClientBuilder</span> class by adding the following code:</p>
+								</figcaption>
+<pre>
+@OnMessage
+<span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">onMessage</span>(Session session, Sticker sticker) {
+   JsonObject jsonSticker = Json.<span class="style_003">createObjectBuilder</span>()
+          .add(<span class="character">"</span><span class="character">name</span><span class="character">"</span>, sticker.getImage())
+          .add(<span class="character">"</span><span class="character">x</span><span class="character">"</span>, sticker.getX())
+          .add(<span class="character">"</span><span class="character">y</span><span class="character">"</span>, sticker.getY())
+          .build();
+
+<span class="codeHighlight">   Client client = ClientBuilder.<span class="style_003">newClient</span>();   </span>
+
+Set&lt;Session&gt; openSessions = session.getOpenSessions();
+  <span class="keyword-directive">for</span> (Session openSession : openSessions) {
+    <span class="keyword-directive">try</span> {
+      openSession.getBasicRemote().sendObject(sticker);
+    } <span class="keyword-directive">catch</span> (IOException | EncodeException ex) {
+      Logger.<span class="style_003">getLogger</span>(StoryWebSocket.<span class="keyword-directive">class</span>.getName()).log(Level.<span class="style_005">SEVERE</span>, <span class="keyword-directive">null</span>, ex);
+    }
+  }
+}
+</pre>
+							</figure>
+							<!-- Step 4 -->
+							<figure>
+								<figcaption>
+									<p>Specify the target of the request resource by adding the following line:</p>
+								</figcaption>
+							</figure>
+<pre>
+@OnMessage
+<span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">onMessage</span>(Session session, Sticker sticker) {
+   JsonObject jsonSticker = Json.<span class="style_003">createObjectBuilder</span>()
+          .add(<span class="character">"</span><span class="character">name</span><span class="character">"</span>, sticker.getImage())
+          .add(<span class="character">"</span><span class="character">x</span><span class="character">"</span>, sticker.getX())
+          .add(<span class="character">"</span><span class="character">y</span><span class="character">"</span>, sticker.getY())
+          .build();
+
+   Client client = ClientBuilder.<span class="style_003">newClient</span>();
+<span class="codeHighlight">   client.target(<span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/story</span><span class="character">"</span>)
+          .request();</span>
+
+Set&lt;Session&gt; openSessions = session.getOpenSessions();
+  <span class="keyword-directive">for</span> (Session openSession : openSessions) {
+    <span class="keyword-directive">try</span> {
+      openSession.getBasicRemote().sendObject(sticker);
+    } <span class="keyword-directive">catch</span> (IOException | EncodeException ex) {
+      Logger.<span class="style_003">getLogger</span>(StoryWebSocket.<span class="keyword-directive">class</span>.getName()).log(Level.<span class="style_005">SEVERE</span>, <span class="keyword-directive">null</span>, ex);
+    }
+  }
+}
+</pre>
+							</figure>
+							<!-- Step 5 -->
+							<figure>
+								<figcaption>
+									<p>Do a chain-invoked HTTP POST request by adding the following line:</p>
+								</figcaption>
+<pre>
+@OnMessage
+<span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">onMessage</span>(Session session, Sticker sticker) {
+   JsonObject jsonSticker = Json.<span class="style_003">createObjectBuilder</span>()
+          .add(<span class="character">"</span><span class="character">name</span><span class="character">"</span>, sticker.getImage())
+          .add(<span class="character">"</span><span class="character">x</span><span class="character">"</span>, sticker.getX())
+          .add(<span class="character">"</span><span class="character">y</span><span class="character">"</span>, sticker.getY())
+          .build();
+
+   Client client = ClientBuilder.<span class="style_003">newClient</span>();
+   client.target(<span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/story</span><span class="character">"</span>)
+          .request()<span class="codeHighlight">.post(Entity.<span class="style_003">entity</span>(jsonSticker, MediaType.<span class="style_005">APPLICATION_JSON</span>));</span>
+
+Set&lt;Session&gt; openSessions = session.getOpenSessions();
+  <span class="keyword-directive">for</span> (Session openSession : openSessions) {
+    <span class="keyword-directive">try</span> {
+      openSession.getBasicRemote().sendObject(sticker);
+    } <span class="keyword-directive">catch</span> (IOException | EncodeException ex) {
+      Logger.<span class="style_003">getLogger</span>(StoryWebSocket.<span class="keyword-directive">class</span>.getName()).log(Level.<span class="style_005">SEVERE</span>, <span class="keyword-directive">null</span>, ex);
+    }
+  }
+}
+</pre>
+								<figcaption>
+									<p>This line of code makes an HTTP POST request to the server by sending the <span class="_obe_code_enter">jsonSticker</span> object (the object that contains the sticker’s data) and specifying it’s type a JSON object.</p>
+									<p>The client is now configured for sending the sticker’s data to the server for persistence.</p>
+								</figcaption>
+							</figure>
+							<!-- Step 6 -->
+							<figure>
+								<figcaption>
+									<p>Select <b>Source &gt; Fix Imports</b> to import the required packages.</p>
+								</figcaption>
+								<img src="images/t60102.png" class="ScreenShot" id="t60102"> 
+							</figure>
+							<!-- Step 7 -->
+							<figure>
+								<figcaption>
+									<p>Select <b>File &gt; Save</b> to save the file.</p>
+								</figcaption>
+								<img src="images/t60103.png" class="ScreenShot" id="t60103"> 
+							</figure>
+						</ol>
+					</div>
+					</section>
+					
+					<!-- Section 6.2: -->
+					<section>
+					<h3 id="t6s2" class="r_arrow"> Sending the Persistence Request to the Server </h3>
+					
+					<div>
+						<ol>
+							<p>When a new connection is made to the server, the <span class="_obe_code_enter">onOpen()</span> method is invoked. 
+							This method keeps a list of active sessions in the server. 
+							In this section, you learn how to request the list of active stickers when connecting to the server.
+							</p>
+
+							<!-- Step 1 -->
+							<figure>
+								<figcaption>
+									<p>Open the <span class="_obe_code_enter">StoryWebSocket.java</span> class.</p>
+								</figcaption>
+								<img src="images/t60201.png" class="ScreenShot" id="t60101"> 
+							</figure>
+							<!-- Step 2 -->
+							<figure>
+								<figcaption>
+									<p>Create a <span class="_obe_code_enter">Client</span> object by adding the following code:</p>
+								</figcaption>
+<pre>
+@OnOpen
+<span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">onOpen</span>(Session session) {
+   <span class="style_005">sessions</span>.add(session);
+
+<span class="codeHighlight">   Client client = ClientBuilder.<span class="style_003">newClient</span>();  </span>
+   JsonArray jsonStickers =
+           client.target(<span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/story</span><span class="character">"</span>)
+           .request(MediaType.<span class="style_005">APPLICATION_JSON</span>).get(JsonArray.<span class="keyword-directive">class</span>);
+
+  <span class="keyword-directive">for</span> (JsonValue jsonValue : jsonStickers) {
+     JsonObject jsonSticker = (JsonObject) jsonValue;
+     Sticker sticker = <span class="keyword-directive">new</span> Sticker();
+     sticker.setImage(jsonSticker.getString(<span class="character">"</span><span class="character">name</span><span class="character">"</span>));
+     sticker.setX(jsonSticker.getInt(<span class="character">"</span><span class="character">x</span><span class="character">"</span>));
+     sticker.setY(jsonSticker.getInt(<span class="character">"</span><span class="character">y</span><span class="character">"</span>));
+     <span class="keyword-directive">try</span> {
+       session.getBasicRemote().sendObject(sticker);
+     } <span class="keyword-directive">catch</span> (IOException | EncodeException ex) {
+       Logger.<span class="style_003">getLogger</span>(StoryWebSocket.<span class="keyword-directive">class</span>.getName()).log(Level.<span class="style_005">SEVERE</span>, <span class="keyword-directive">null</span>, ex);
+     }
+   }
+}
+</pre>								
+								<figcaption>
+									<p>A <span class="_obe_code_enter">Client</span> object is defined.</p>
+								</figcaption>
+							</figure>
+							<!-- Step 3 -->
+							<figure>
+								<figcaption>
+									<p>Create a <span class="_obe_code_enter">JsonArray</span> object for storing the list of stickers sent by the server.</p>
+								</figcaption>
+<pre>
+@OnOpen
+<span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">onOpen</span>(Session session) {
+   <span class="style_005">sessions</span>.add(session);
+
+   Client client = ClientBuilder.<span class="style_003">newClient</span>();
+<span class="codeHighlight">   JsonArray jsonStickers;   </span>
+
+}
+</pre>
+							</figure>
+							<!-- Step 4 -->
+							<figure>
+								<figcaption>
+									<p>Specify the  target of the resource and do a chain-invoked HTTP GET request by adding the following line:</p>
+								</figcaption>
+<pre>
+@OnOpen
+<span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">onOpen</span>(Session session) {
+   <span class="style_005">sessions</span>.add(session);
+
+   Client client = ClientBuilder.<span class="style_003">newClient</span>();
+<span class="codeHighlight">   JsonArray jsonStickers =
+           client.target(<span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/story</span><span class="character">"</span>)
+           .request(MediaType.<span class="style_005">APPLICATION_JSON</span>).get(JsonArray.<span class="keyword-directive">class</span>);   </span>
+
+}
+</pre>								
+								<figcaption>
+									<ul>
+										<li>The <span class="_obe_code_enter">client.target()</span> method specifies that the URI of the requested resource.</li>
+										<li>The <span class="_obe_code_enter">request()</span> method specifies the type of media that is retrieved from the server; in this case, a JSON object.</li>
+										<li>The <span class="_obe_code_enter">get()</span> method invokes the HTTP GET method and specifies the Java type that the response entity is converted to, in this case a JsonArray class.</li>
+									</ul>
+								</figcaption>
+							</figure>
+							<!-- Step 5 -->
+							<figure>
+								<figcaption>
+									<p>Iterate over the <span class="_obe_code_enter">jsonSticker</span> object to obtain its values and create new Sticker objects by adding the following code:</p>
+								</figcaption>
+<pre>
+@OnOpen
+<span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">onOpen</span>(Session session) {
+   <span class="style_005">sessions</span>.add(session);
+
+   Client client = ClientBuilder.<span class="style_003">newClient</span>();
+   JsonArray jsonStickers =
+           client.target(<span class="character">"</span><span class="character">http://localhost:8080/sticker-story-rest-server/rest/story</span><span class="character">"</span>)
+           .request(MediaType.<span class="style_005">APPLICATION_JSON</span>).get(JsonArray.<span class="keyword-directive">class</span>);
+
+<span class="codeHighlight">   <span class="keyword-directive">for</span> (JsonValue jsonValue : jsonStickers) {
+     JsonObject jsonSticker = (JsonObject) jsonValue;
+     Sticker sticker = <span class="keyword-directive">new</span> Sticker();
+     sticker.setImage(jsonSticker.getString(<span class="character">"</span><span class="character">name</span><span class="character">"</span>));
+     sticker.setX(jsonSticker.getInt(<span class="character">"</span><span class="character">x</span><span class="character">"</span>));
+     sticker.setY(jsonSticker.getInt(<span class="character">"</span><span class="character">y</span><span class="character">"</span>));
+     <span class="keyword-directive">try</span> {
+       session.getBasicRemote().sendObject(sticker);
+     } <span class="keyword-directive">catch</span> (IOException | EncodeException ex) {
+       Logger.<span class="style_003">getLogger</span>(StoryWebSocket.<span class="keyword-directive">class</span>.getName()).log(Level.<span class="style_005">SEVERE</span>, <span class="keyword-directive">null</span>, ex);   
+     }
+   }   </span>
+}
+</pre>								
+							</figure>
+							<!-- Step 6 -->
+							<figure>
+								<figcaption>
+									<p>Select <b>Source &gt; Fix Imports</b> to import the required packages.</p>
+								</figcaption>
+								<img src="images/t60202.png" class="ScreenShot" id="t60102"> 
+							</figure>
+							<!-- Step 7 -->
+							<figure>
+								<figcaption>
+									<p>Select <b>File &gt; Save</b> to save the file.</p>
+								</figcaption>
+								<img src="images/t60203.png" class="ScreenShot" id="t60103"> 
+							</figure>
+						</ol>
+					</div>
+					</section>
+					
+					<!-- Section 6.3: -->
+					<section>
+					<h3 id="t6s3" class="r_arrow"> Persisting the Sticker Objects </h3>
+					<div>
+						<ol>
+							<p>In this section you process the HTTP POST and GET requests you defined in the previous sections.
+							</p>
+							<!-- Step 1 -->
+							<figure>
+								<figcaption>
+									<p>Open the <span class="_obe_code_enter">StoryResource.java</span> class, located in the <span class="_obe_code_enter">org.books.sticker.story.rest.server</span> package of the <span class="_obe_code_enter">sticker-story-rest-server</span> project.</p>
+								</figcaption>
+								<img src="images/t60301.png" class="ScreenShot" id="t60301"> 
+							</figure>
+							<!-- Step 2 -->
+							<figure>
+								<figcaption>
+									<p>Modify the <span class="_obe_code_enter">getStickers() method by building a <span class="_obe_code_enter">JsonArray</span> object to store a sticker's information. Add the following code:</p>
+								</figcaption>
+<pre>
+@GET
+@Produces(<span class="character">"</span><span class="character">application/json</span><span class="character">"</span>)
+<span class="keyword-directive">public</span> JsonArray <span class="ST0">getStickers</span>() {
+<span class="codeHighlight">    JsonArrayBuilder arrayBld = Json.<span class="style_003">createArrayBuilder</span>();   </span>
+}
+</pre>								
+							
+								<figcaption>
+									<p>Notice that the <span class="_obe_code_enter">getStickers()</span> method is annotated with the <span class="_obe_code_enter">@GET</span> annotation, which processes the HTTP GET requests.</p>
+								</figcaption>
+							</figure>
+							<!-- Step 3 -->
+							<figure>
+								<figcaption>
+									<p>Iterate over the JSON object and set the sticker object’s values by adding the following code: </p>
+								</figcaption>
+<pre>
+@Produces(<span class="character">"</span><span class="character">application/json</span><span class="character">"</span>)
+<span class="keyword-directive">public</span> JsonArray <span class="ST0">getStickers</span>() {
+    JsonArrayBuilder arrayBld = Json.<span class="style_003">createArrayBuilder</span>();
+<span class="codeHighlight">    <span class="keyword-directive">for</span> (Sticker sticker : <span class="ST1">stickers</span>) {
+    arrayBld.add(Json.<span class="style_003">createObjectBuilder</span>()   
+            .add(<span class="character">"</span><span class="character">name</span><span class="character">"</span>, sticker.getName())
+            .add(<span class="character">"</span><span class="character">x</span><span class="character">"</span>, sticker.getX())
+            .add(<span class="character">"</span><span class="character">y</span><span class="character">"</span>, sticker.getY()));
+    }</span>
+}
+</pre>
+							</figure>
+							<!-- Step 4 -->
+							<figure>
+								<figcaption>
+									<p>Specify a return value by adding building the JSON object. Add the following code:</p>
+								</figcaption>
+
+<pre>
+@Produces(<span class="character">"</span><span class="character">application/json</span><span class="character">"</span>)
+<span class="keyword-directive">public</span> JsonArray <span class="ST0">getStickers</span>() {
+    JsonArrayBuilder arrayBld = Json.<span class="style_003">createArrayBuilder</span>();
+    <span class="keyword-directive">for</span> (Sticker sticker : <span class="ST1">stickers</span>) {
+    arrayBld.add(Json.<span class="style_003">createObjectBuilder</span>()
+            .add(<span class="character">"</span><span class="character">name</span><span class="character">"</span>, sticker.getName())
+            .add(<span class="character">"</span><span class="character">x</span><span class="character">"</span>, sticker.getX())
+            .add(<span class="character">"</span><span class="character">y</span><span class="character">"</span>, sticker.getY()));
+    }
+<span class="codeHighlight">    <span class="keyword-directive">return</span> arrayBld.build();   </span>
+}
+</pre>
+							</figure>	
+							<!-- Step 5 -->
+							<figure>
+								<figcaption>
+									<p>Modify the <span class="_obe_code_enter">addSticker()</span> method by adding the following code:</p>
+								</figcaption>
+<pre>
+@POST
+@Consumes(<span class="character">"</span><span class="character">application/json</span><span class="character">"</span>)
+<span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST0">addSticker</span>(JsonObject jsonSticker) {
+<span class="codeHighlight">   Sticker sticker = <span class="keyword-directive">new</span> Sticker();
+   sticker.setName(jsonSticker.getString(<span class="character">"</span><span class="character">name</span><span class="character">"</span>));  
+   sticker.setX(jsonSticker.getInt(<span class="character">"</span><span class="character">x</span><span class="character">"</span>));
+   sticker.setY(jsonSticker.getInt(<span class="character">"</span><span class="character">y</span><span class="character">"</span>));
+   <span class="ST1">stickers</span>.add(sticker);</span>
+}
+</pre>								
+								<figcaption>
+									<p>The <span class="_obe_code_enter">addSticker()</span> method receives a JSON object with the sticker’s data of each newly-dropped sticker. 
+									Notice that this method is annotated with the <span class="_obe_code_enter">@POST</span> annotation, which processes HTTP POST requests. 
+									Finally, the sticker’s data received from the client is set in the new object and added to the list of stickers.</p>
+								</figcaption>
+							</figure>
+							<!-- Step 6 -->
+							<figure>
+								<figcaption>
+									<p>Select <b>Source &gt; Fix Imports</b> to import the required packages.</p>
+								</figcaption>
+								<img src="images/t60302.png" class="ScreenShot" id="t60302"> 
+							</figure>
+							<!-- Step 7 -->
+							<figure>
+								<figcaption>
+									<p>Select <b>File &gt; Save</b> to save the file.</p>
+								</figcaption>
+								<img src="images/t60303.png" class="ScreenShot" id="t60303"> 
+							</figure>
+							<!-- Step 8 -->
+							<figure>
+								<figcaption>
+									<p>Right-click the <span class="_obe_code_enter">sticker-story</span> project and select Run.</p>
+								</figcaption>
+								<img src="images/t60304.png" class="ScreenShot" id="t60304"> 
+								<figcaption>
+									<p>A new browser window opens and displays the sticker story application.
+								</figcaption>
+							</figure>
+							<!-- Step 9 -->
+							<figure>
+								<figcaption>
+									<p>Drag and drop some of the stickers onto the story board.</p>
+								</figcaption>
+								<img src="images/t60305.png" class="ScreenShot" id="t60305"> 
+								<figcaption>
+									<p>The sticker images stay stuck in the board.</p>
+								</figcaption>
+							</figure>
+							<!-- Step 9 -->
+							<figure>
+								<figcaption>
+									<p>Close the web browser window.</p>
+								</figcaption>
+							</figure>
+							<!-- Step 9 -->
+							<figure>
+								<figcaption>
+									<p>Open a new browser window again and go to the following URL: <a href="http://localhost:8080/sticker-story/">http://localhost:8080/sticker-story/</a>.</p>
+								</figcaption>
+								<img src="images/t60306.png" class="ScreenShot" id="t60306"> 
+								<figcaption>
+									<p>The story board loads and displays the sticker images in the same position you left them in Step 9.</p>
+									<p>Congratulations! You successfully persisted the stickers' positions in the server.</p>
+								</figcaption>
+							</figure>
+						</ol>
+					</div>
+					</section>
+					
+				</ol>
+			</div>
+		</section>
+
+		<!-- Section 7 -->
+        <section>
+          <h2 id="summary"> Summary </h2>
+          <div>
+            <ol>
+              <p>In this tutorial you learned how to use the Java API for RESTful Web Services (JAX-RS 2.0) and 
+			  the Java API for JSON Processing to build an interactive web application that persists an object's properties in the server.</p>
+              <p> You also learned how to: </p>
+              <ul>
+                <li>Use the <span class="_obe_code_enter">Client</span> class to build and execute requests for calling a REST service.</li>
+                <li>Use the <span class="_obe_code_enter">WebTarget</span> class to specify a Client's target for requests.</li>
+				<li>Build, process and manipulate JSON files.</li>
+				<li>Model and create persistence requests.</li>
+				<li>Send persistence requests to the server using HTTP POST.</li>
+				<li>Request persistence requests from the server using HTTP GET.</li>
+				<li>Receive JSON data and store it as objects in the server.</li>
+				
+              </ul>
+              <h4> Resources </h4>
+              <p> For more information about the topics in this tutorial, see: </p>
+              <ul>
+            <li><a href="http://jcp.org/en/jsr/detail?id=353">Java API for JSON Processing</a></li>
+            <li><a href="http://www.jcp.org/en/jsr/detail?id=339">JSR 339: JAX-RS 2.0: The Java API for RESTful Web Services</a></li>
+            <li><a href="http://www.oracle.com/technetwork/articles/java/jaxrs20-1929352.html"> Java EE 7 and JAX-RS 2.0</a></li>
+            <li><a href="https://blogs.oracle.com/arungupta/entry/jax_rs_client_api_and">JAX-RS Client API and GlassFish 4 - Logging HTTP messages</a> </li>
+			<li><a href="http://education.oracle.com/pls/web_prod-plq-dad/db_pages.getpage?page_id=609&p_org_id=189915&lang=ESA&get_params=dc:D77640GC10,p_preview:N">Java EE 7: New Features</a>.</li>
+			<li><a href="http://docs.oracle.com/javaee/7/tutorial/doc/home.htm">The Java EE 7 Tutorial</a></li>
+			<li><a href="http://docs.oracle.com/javaee/7/tutorial/doc/jsonp.htm#GLRBB">The Java EE 7 Tutorial chapter on JSON Processing</a></li>
+			<li><a href="http://docs.oracle.com/javaee/7/tutorial/doc/jaxrs.htm#GIEPU">The Java EE 7 Tutorial chapter on Building RESTful Web Services With JAX-RS</a></li>
+			<li><a href="<li><a href="http://www.oracle.com/oll">Oracle Online Learning Library</a></li>">Oracle Online Learning Library - Java Resources</a></li>
+            <li> To learn more about Java EE 7, refer to additional OBEs in the <a href="http://www.oracle.com/goto/oll"
+
+                                               target="_blank"> Oracle Learning Library</a>.</li>
+          </ul>
+
+              <h4> Credits </h4>
+              <ul>
+                <li> Lead Curriculum Developer: Miguel Salazar </li>
+                <li> Other Contributors: Eduardo Moranchel</li>
+              </ul>
+            </ol>
+          </div>
+        </section>
+      </div>
+      <!-- container -->
+      <div id="dialog-help" title="Help">
+        <p> To help navigate this Oracle by Example, note the following: </p>
+        <dl>
+          <dt> Hiding Header Buttons: </dt>
+          <dd> Click the Title to hide the buttons in the header. To show the
+            buttons again, simply click the Title again. </dd>
+          <dt> Topic List Button: </dt>
+          <dd> A list of all the topics. Click one of the topics to navigate to
+            that section. </dd>
+          <dt> Expand/Collapse All Topics: </dt>
+          <dd> To show/hide all the detail for all the sections. By default, all
+            topics are collapsed </dd>
+          <dt> Show/Hide All Images: </dt>
+          <dd> To show/hide all the screenshots. By default, all images are
+            displayed. </dd>
+          <dt> Print: </dt>
+          <dd> To print the content. The content currently displayed or hidden
+            will be printed. </dd>
+        </dl>
+        <p> </p>
+      </div>
+      <div id="dialog" title="Topic List">
+        <p> To navigate to a particular section in this tutorial, select the
+          topic from the list. </p>
+        <ul>
+        </ul>
+      </div>
+      <footer>
+        <nav> <a class="help" href="#"> Help </a> <a href="http://www.oracle.com/goto/oll">
+            OLL </a> <a href="http://www.oracle.com/us/corporate/index.html" onclick="navTrack('otn','en','footer','about oracle');"
+
+            class="footerLinks"> About Oracle </a> <a href="http://apex.oracle.com/pls/apex/f?p=44785:34:0"
+
+            onclick="navTrack('otn','en','footer','contact us');" class="footerLinks">
+            Contact Us </a> <a href="http://www.oracle.com/us/legal/terms/index.html"
+
+            onclick="navTrack('otn','en','footer','terms of use');" class="footerLinks">
+            Terms of Use </a> </nav>
+      </footer>
+    </article>
+  </body>
+</html>
