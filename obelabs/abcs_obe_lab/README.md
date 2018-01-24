@@ -69,28 +69,31 @@ Oracle Visual Builder Cloud Service is a visual development tool for creating we
 
 ## Complete and Test the App ##
 
-On the Runtime page, click Back To Designer.
-On the Application Designer page, click Home.
-Clear Filter, click the picture component in the components panel, and then drag and drop it onto the Home page of your web app.
-UI Components section
-Description of the illustration abcs-15.png
-In the active window, click select from Image Gallery.
-On the Image Gallery tab, click Application Menu, click the navi_library image, and then click Select.
-Image Gallery tab
-Description of the illustration abcs-17.png
-In the Select from Image Gallery dialog box, click Create Accept button .
-On the Application Designer page, click Actions, and then click Add Action.
-Properties panel for the Image component
-Description of the illustration abcs-18.png
-On the Configure Action page, select Navigate to Page in the Suggested panel and drag and drop it onto the THEN DO SOMETHING ELSE section.
-Configure Action page
-Description of the illustration abcs-19.png
-On the Configure Action page, select Book Catalog from the Page to Open drop-down list, and click Done.
-On the Application Designer page, click Test Application Test Application button.
-Your running app should look like the following image:
+1. On the Runtime page, click Back To Designer.
+2. On the Application Designer page, click Home.
+3. Clear Filter, click the picture component in the components panel, and then drag and drop it onto the Home page of your web app.
 
-Finalized Books Tracker application
-Description of the illustration abcs-21.png
+   ![UI Components section](img/abcs-15.png)
+
+4. In the active window, click select from Image Gallery.
+5. On the Image Gallery tab, click Application Menu, click the navi_library image, and then click Select.
+
+   ![Image Gallery tab](img/abcs-17.png)
+
+6. In the Select from Image Gallery dialog box, click Create Accept button .
+7. On the Application Designer page, click Actions, and then click Add Action.
+
+   ![Properties panel for the Image component](img/abcs-18.png)
+
+8. On the Configure Action page, select Navigate to Page in the Suggested panel and drag and drop it onto the THEN DO SOMETHING ELSE section.
+
+   ![Configure Action page](img/abcs-19.png)
+
+9. On the Configure Action page, select Book Catalog from the Page to Open drop-down list, and click Done.
+10. On the Application Designer page, click Test Application Test Application button.
+11. Your running app should look like the following image:
+
+   ![Finalized Books Tracker application](img/abcs-21.png)
 
 ## Want to Learn More? ##
 
