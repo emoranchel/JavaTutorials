@@ -95,17 +95,25 @@
             $.ajax("README.md", {
 
             }).done(function (data) {
-                //TODO: DIS !
+                $.ajax("", {
+                    //TODO: DIS !
+                    
+                }).done(function (htmlData) {
+                    $("#DOCCONTENTMAIN").append(htmlData);
 
-                var toc = $("#toc").tocify({
-                    selectors: "h2,h3,h4,h5"
-                }).data("toc-tocify");
+                    var toc = $("#toc").tocify({
+                        selectors: "h2,h3,h4,h5"
+                    }).data("toc-tocify");
 
-                //prettyPrint();
-                $(".optionName").popover({ trigger: "hover" });
+                    //prettyPrint();
+                    $(".optionName").popover({ trigger: "hover" });
 
-                //sets options
-                toc.setOptions({ extendPage: false, showEffect: "fadeIn", smoothScroll: false });
+                    //sets options
+                    toc.setOptions({ extendPage: false, showEffect: "fadeIn", smoothScroll: false });
+                });
+
+
+
             });
         });
     </script>
@@ -138,7 +146,7 @@
                 </div>
             </div>
             <div id="bookContainer">
-                <article>
+                <article id="DOCCONTENTMAIN">
                     <div data-spy="scroll" data-target=".left-nav-w"> </div>
 
                 </article>
