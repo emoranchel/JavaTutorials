@@ -1,6 +1,4 @@
-<!--
 Full version available at: http://emoranchel.github.io/JavaTutorials/obelabs/abcs_obe_lab/
--->
 
 # Developing a Business Application by Using Oracle Visual Builder Cloud Service #
 
