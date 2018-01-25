@@ -100,16 +100,16 @@
                     if (lines[i].startsWith("# ")) {
                         title = lines[i].substr(2, lines[i].lastIndexOf('#')-2);
                         lines.splice(0, i + 1);
-                        readmedata = lines.join('\n');
                         break;
                     }
                     if(lines[i].indexOf("![](")>=0){
                        lines[i]=lines[i].replace('![](','![](https://raw.githubusercontent.com/oracle/learning-library/master/workshops/microservices/');
                     }
                 }
+                readmedata = lines.join('\n');
+
                 if(!title){
                     title = 'Oracle by Example';
-                    readmedata = lines.join('\n');
                 }
 
                 $('#mainTitle').html(title);
