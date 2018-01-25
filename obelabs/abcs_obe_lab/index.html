@@ -98,7 +98,7 @@
                 var title = 'TITLE';
                 for (var i = 0; i < lines.length; i++) {
                     if (lines[i].startsWith("# ")) {
-                        title = lines[i].substr(2, lines[i].lastIndexOf('#')-1);
+                        title = lines[i].substr(2, lines[i].lastIndexOf('#')-2);
                         lines.splice(0, i + 1);
                         readmedata = lines.join('\n');
                         break;
