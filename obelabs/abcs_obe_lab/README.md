@@ -27,6 +27,57 @@ Oracle Visual Builder Cloud Service is a visual development tool for creating we
 4. Click **Customize Dashboard**.
 5. Select **Show** for **appbuilder** and close the dialog box.
 6. In the **Application Builder** tile, click **Action** ![Action menu](img/hamburger.png)  and select **Open Service Console**.
+   Some code for example:
+```java
+package org.example.stickerStory;
+
+import java.io.IOException;
+import javax.json.JsonObject;
+import javax.websocket.EncodeException;
+import javax.websocket.Session;
+import javax.websocket.WebSocketClose;
+import javax.websocket.WebSocketEndpoint;
+import javax.websocket.WebSocketMessage;
+import javax.websocket.WebSocketOpen;
+import javax.websocket.WebSocketPathParam;
+
+@WebSocketEndpoint(
+        value = "/story/{story-id}/notifications",
+        encoders = {org.example.stickerStory.JsonEncoder.class},
+        decoders = {org.example.stickerStory.JsonDecoder.class})
+public class StoryWebSocket {
+
+    private StoryCollection storyCollection = new StoryCollection();
+
+    @WebSocketMessage
+    public void onMessage(
+            @WebSocketPathParam("story-id") String storyId,
+            Session session,
+            JsonObject jsonObject) throws IOException, EncodeException {
+        System.out.println("MESSAGE RECEIVED");
+        Story story = storyCollection.getStory(storyId);
+        story.addSticker(jsonObject);
+    }
+
+    @WebSocketOpen
+    public void onOpen(
+            @WebSocketPathParam("story-id") String storyId,
+            Session session) {
+        Story story = storyCollection.getStory(storyId);
+        story.addPlayer(session);
+        story.updatePlayer(session);
+    }
+
+    @WebSocketClose
+    public void onClose(
+            @WebSocketPathParam("story-id") String storyId,
+            Session session) {
+        Story story = storyCollection.getStory(storyId);
+        story.removePlayer(session);
+    }
+}
+```
+
 
    ![Application Builder tile](img/abcs-00.png)
 
@@ -37,6 +88,85 @@ Oracle Visual Builder Cloud Service is a visual development tool for creating we
 3. In the **Application Template** field, select `Oracle Alta UI`, click **Next**, and then click **Finish**.
 4. From the main toolbar, click **Home** and then click **New Page**.
 5. In the **Create Page** wizard, in the **Page Title** field, enter `Book Catalog`, click **Edit**, and then click **Next**.
+   Some more code before the image
+
+```javascript
+function backgroundImg() {
+    var canvas = document.getElementById("board");
+    var ctx = canvas.getContext("2d");
+    var img = document.getElementById("background_img");
+    ctx.drawImage(img, 0, 0);
+}
+function toggleLog() {
+    var log = document.getElementById("logContainer");
+    if (!log.getAttribute("style")) {
+        log.setAttribute("style", "display:block;");
+    } else {
+        log.setAttribute("style", "");
+    }
+}
+
+function drag(ev) {
+    var bounds = ev.target.getBoundingClientRect();
+    var dragObject = {
+        sticker: ev.target.getAttribute("data-sticker"),
+        offsetX: ev.clientX - bounds.left,
+        offsetY: ev.clientY - bounds.top
+    };
+
+    ev.dataTransfer.setData("Sticker", JSON.stringify(dragObject));
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    var bounds = document.getElementById("board").getBoundingClientRect();
+    var dragObject = JSON.parse(ev.dataTransfer.getData("Sticker"));
+    var sendObject = {action: "add",
+        x: ev.clientX - dragObject.offsetX - bounds.left,
+        y: ev.clientY - dragObject.offsetY - bounds.top,
+        sticker: dragObject.sticker};
+    socket.send(JSON.stringify(sendObject));
+    log("Sending Object " + JSON.stringify(sendObject));
+}
+
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+var logCount = 0;
+function log(logstr) {
+    var logElement = document.getElementById("log");
+    logElement.innerHTML = "<b>[" + logCount + "]: </b>" + logstr + "<br>" + logElement.innerHTML;
+    logCount++;
+}
+window.onload = initialize;
+var socket = null;
+function initialize() {
+    backgroundImg();
+    socket = new WebSocket("ws://localhost:8080/StickerStory/story/1/notifications");
+    socket.onopen = function() {
+        var sendObject = {action: "HAI"};
+        socket.send(JSON.stringify(sendObject));
+        log("Sending Object " + JSON.stringify(sendObject));
+    };
+    socket.onmessage = function(event) {
+        if (event.data) {
+            var receiveObject = JSON.parse(event.data);
+            if (receiveObject.action === "add") {
+                var imageObj = new Image();
+                imageObj.onload = function() {
+                    var canvas = document.getElementById("board");
+                    var context = canvas.getContext("2d");
+                    context.drawImage(imageObj, receiveObject.x, receiveObject.y);
+                };
+                imageObj.src = "resources/stickers/" + receiveObject.sticker;
+            }
+            log("Received Object: " + JSON.stringify(receiveObject));
+        }
+    };
+
+}
+```
 
    ![Create Page step](img/abcs-05.png)
 
