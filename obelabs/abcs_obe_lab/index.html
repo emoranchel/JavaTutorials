@@ -95,7 +95,7 @@
             $.ajax("https://raw.githubusercontent.com/oracle/learning-library/master/workshops/microservices/CloudNative100.md").done(function (readmedata) {
                 var startIndex = 0;
                 var lines = readmedata.split('\n');
-                var title = 'TITLE';
+                var title;
                 for (var i = 0; i < lines.length; i++) {
                     if (lines[i].startsWith("# ")) {
                         title = lines[i].substr(2, lines[i].lastIndexOf('#')-2);
@@ -103,6 +103,9 @@
                         readmedata = lines.join('\n');
                         break;
                     }
+                }
+                if(!title){
+                    title = 'Oracle by Example';
                 }
 
                 $('#mainTitle').html(title);
