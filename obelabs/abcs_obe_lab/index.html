@@ -103,6 +103,9 @@
                         readmedata = lines.join('\n');
                         break;
                     }
+                    if(lines[i].contains("![]("){
+                       lines[i]=lines[i].replace('![](','![](https://raw.githubusercontent.com/oracle/learning-library/master/workshops/microservices/');
+                    }
                 }
                 if(!title){
                     title = 'Oracle by Example';
