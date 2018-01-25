@@ -92,7 +92,7 @@
 
     <script>
         $(function () {
-            $.ajax("README.md").done(function (readmedata) {
+            $.ajax("https://raw.githubusercontent.com/oracle/learning-library/master/workshops/microservices/CloudNative100.md").done(function (readmedata) {
                 var startIndex = 0;
                 var lines = readmedata.split('\n');
                 var title = 'TITLE';
@@ -112,7 +112,7 @@
                     data: JSON.stringify({
                         text: readmedata,
                         mode: "gfm",
-                        context: "emoranchel/JavaTutorials/obelabs/abcs_obe_lab"
+                        context: "oracle/learning-library/master/workshops/microservices"
                     })
                 }).done(function (htmlData) {
                     $("#DOCCONTENTMAIN").append(htmlData);
