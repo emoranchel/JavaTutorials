@@ -92,12 +92,28 @@
 
     <script>
         $(function () {
-            $.ajax("README.md", {
+            $.ajax("README.md").done(function (readmedata) {
+                var startIndex = 0;
+                var lines = readmedata.split('\n');
+                var title = 'TITLE';
+                for (var i = 0; i < lines.length; i++) {
+                    if (lines[i].startsWith("# ")) {
+                        title = lines[i].substr(2, lines[i].lastIndexOf('#')-1);
+                        lines.splice(0, i + 1);
+                        readmedata = lines.join('\n');
+                        break;
+                    }
+                }
 
-            }).done(function (data) {
-                $.ajax("", {
-                    //TODO: DIS !
-                    
+                $('#mainTitle').html(title);
+
+                $.ajax("https://api.github.com/markdown", {
+                    method: "POST",
+                    data: JSON.stringify({
+                        text: readmedata,
+                        mode: "gfm",
+                        context: "emoranchel/JavaTutorials/obelabs/abcs_obe_lab"
+                    })
                 }).done(function (htmlData) {
                     $("#DOCCONTENTMAIN").append(htmlData);
 
@@ -133,7 +149,9 @@
     <div id="content">
 
         <h1>
-            <img src="./img/obe_tag.png" align="middle" alt="Oracle by Example branding" />Developing a Business Application by Using Oracle Visual Builder Cloud Service</h1>
+            <img src="./img/obe_tag.png" align="middle" alt="Oracle by Example branding" />
+            <span id="mainTitle">TITLE</span>
+        </h1>
         <div class="w1024" style="position:relative; margin-top:40px;">
             <div class="navbackwide border-right"></div>
             <div id="shownav" title="Show Navigation"></div>
