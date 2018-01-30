@@ -1,4 +1,4 @@
-Full version available at: http://emoranchel.github.io/JavaTutorials/obelabs/abcs_obe_lab/
+Full version available at: http://emoranchel.github.io/JavaTutorials/OBE-Viewer/?obe=obelabs%2Fabcs_obe_lab%2FREADME.json
 <!--
 {
   Tags: node, server 
