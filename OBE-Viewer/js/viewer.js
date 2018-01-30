@@ -48,7 +48,7 @@ $(function () {
                 var first = true;
                 for (var i = 0; i < lines.length; i++) {
                     if (lines[i].indexOf("<h2>") >= 0) {
-                        lines.splice(i,0,first?"<section>":"</section><section>");
+                        lines.splice(i,0,first?"<section>":"</section><hr><section>");
                         i++;
                         first=false;
                     }
