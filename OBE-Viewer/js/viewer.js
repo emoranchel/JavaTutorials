@@ -44,7 +44,16 @@ $(function () {
                     context: BASEPATH + config.context
                 })
             }).done(function (htmlData) {
-                $("#DOCCONTENTMAIN").append(htmlData);
+                var lines = htmlData.split('\n');
+                var first = true;
+                for (var i = 0; i < lines.length; i++) {
+                    if (lines[i].indexOf("<h2>") >= 0) {
+                        lines.splice(i,0,first?"<section>":"</section><section>");
+                        first=false;
+                    }
+                }
+                lines.push("</section>")
+                $("#DOCCONTENTMAIN").append(lines.join('\n'));
 
                 var toc = $("#toc").tocify({
                     selectors: "h2,h3,h4,h5"

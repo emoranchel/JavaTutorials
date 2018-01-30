@@ -6,8 +6,6 @@ Full version available at: http://emoranchel.github.io/JavaTutorials/OBE-Viewer/
 -->
 # Developing a Business Application by Using Oracle Visual Builder Cloud Service #
 
-<section>
-
 ## Before You Begin ##
 
 This tutorial shows you how to quickly develop a business app by using Oracle Application Business Cloud Service. This tutorial takes approximately 15 minutes to complete.
@@ -82,9 +80,6 @@ public class StoryWebSocket {
 
 
    ![Application Builder tile](img/abcs-00.png)
-
-</section>
-<section>
 
 ## Design the Application UI ##
 
@@ -178,9 +173,6 @@ function initialize() {
 6. Click **New Business Object**, enter `Book_Catalog_BO` in the **Business Object Name** field, and click OK  Business object **OK** ![button](img/func_checkmark_16_ena.png) .
 7. Click **Create** to save the changes.
 
-</section>
-<section>
-
 ## Add a Table Component to the Form ##
 
 1. On the Application Designer page, in the Filter Box field of the components panel, enter table, and drag and drop the table component onto the Book Catalog form.
@@ -239,11 +231,6 @@ function initialize() {
 
    ![Finalized Books Tracker application](img/abcs-21.png)
 
-</section>
-<section>
-
 ## Want to Learn More? ##
 
 [Oracle Visual Builder Cloud Service: Get Started](http://www.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/app-builder-cloud&id=abcsgs)
-
-</section>
